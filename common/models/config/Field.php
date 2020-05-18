@@ -30,7 +30,11 @@ use Yii;
  */
 class Field extends \common\models\base\BaseModel
 {
+
     use MerchantBehavior;
+
+    private $types_arr = ['leads','customer','contacts','product','business','contract','oa_examine','hrm_parroll','admin_user','receivables','receivables_plan'];
+
     /**
      * {@inheritdoc}
      */

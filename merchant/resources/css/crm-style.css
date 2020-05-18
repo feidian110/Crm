@@ -1,0 +1,67 @@
+.leads-img{
+    background-image: url("../img/leads.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+.customer-img{
+    background-image: url("../img/customer.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+.contact-img{
+    background-image: url("../img/contact.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+.business-img{
+    background-image: url("../img/business.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+.contract-img{
+    background-image: url("../img/contract.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+.product-img{
+    background-image: url("../img/product.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+.receivable-img{
+    background-image: url("../img/receivable.png");
+    background-repeat: no-repeat;
+    background-size:100% 100%;
+    -moz-background-size:100% 100%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}

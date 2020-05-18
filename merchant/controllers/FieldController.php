@@ -35,4 +35,18 @@ class FieldController extends BaseController
         ] );
     }
 
+    public function actionEdit()
+    {
+        return $this->render( $this->action->id );
+    }
+
+    public function actionView()
+    {
+        $param = Yii::$app->request->get();
+        $list = Yii::$app->crmService->crmField->getDataList($param);
+
+        return $this->renderAjax( $this->action->id,[
+            'list' =>$list
+        ] );
+    }
 }

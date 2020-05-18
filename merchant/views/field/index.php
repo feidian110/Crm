@@ -1,9 +1,12 @@
 <?php
 use common\helpers\Html;
+use common\helpers\AddonHelper;
 
 $this->title = "自定义字段设置";
-?>
 
+
+?>
+<?= AddonHelper::cssFile('css/crm-style.css')?>
 <div class="row">
     <div class="col-md-12">
 
@@ -16,12 +19,32 @@ $this->title = "自定义字段设置";
                     <tbody>
                     <?php foreach ( $model as $item ):?>
                     <tr>
-                        <td style="height: 40px">1.</td>
-                        <td><?= $item['name'];?></td>
-                        <td><?= $item['updated_at'] ? Yii::$app->formatter->asDate($item['updated_at']) : '未';?>更新</td>
+                        <td width="30">
+                            <?php if( $item['types'] == 'leads' ):?>
+                                <div class="leads-img"></div>
+
+                            <?php elseif ($item['types'] == 'customer'):?>
+                                <div class="customer-img"></div>
+                            <?php elseif ($item['types'] == 'contacts'):?>
+                                <div class="contact-img"></div>
+                            <?php elseif ($item['types'] == 'product'):?>
+                                <div class="product-img"></div>
+                            <?php elseif ($item['types'] == 'business'):?>
+                                <div class="business-img"></div>
+                            <?php elseif ($item['types'] == 'contract'):?>
+                                <div class="contract-img"></div>
+                            <?php elseif ($item['types'] == 'receivables'):?>
+                                <div class="receivable-img"></div>
+                            <?php endif;?>
+                        </td>
+                        <td width="700"><?= $item['name'];?></td>
+                        <td width="700"><?= $item['updated_at'] ? date('Y-m-d').'&nbsp;' : '未';?>更新</td>
                         <td>
-                            <?= Html::edit(['edit','type'=>$item['types']],'编辑');?>
-                            <?= Html::edit(['view','type'=>$item['types']],'预览');?>
+                            <?=Html::a('编辑',['edit','types'=>$item['types']]);?>
+                            <?=Html::a('预览',['view','types'=>$item['types']],[
+                                'data-toggle' => 'modal',
+                                'data-target' => '#ajaxModalLg',
+                            ]);?>
                         </td>
                     </tr>
                     <?php endforeach;?>
