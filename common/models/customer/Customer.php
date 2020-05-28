@@ -2,16 +2,22 @@
 
 namespace addons\Crm\common\models\customer;
 
+use addons\Crm\common\enums\NatureEnum;
+use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\models\contact\Contact;
 use common\behaviors\MerchantBehavior;
+use common\enums\WhetherEnum;
+use common\models\merchant\Member;
 use Yii;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "{{%addon_crm_customer}}".
  *
  * @property string $id 主键
+ * @property string $customer_sn 客户编号
  * @property string $merchant_id 所属商户
- * @property string $sore_id 所属门店
+ * @property string $store_id 所属门店
  * @property string $title 客户名称
  * @property string $act_time 活动时间
  * @property int $slot 活动时段
@@ -23,6 +29,7 @@ use Yii;
  * @property string $extend 扩展字段
  * @property string $remark 客户备注
  * @property string $creator_id 创建人
+ * @property string $banquet_manager 宴会经理
  * @property string $owner_id 负责人
  * @property int $status 状态
  * @property int $created_at 创建时间
@@ -45,10 +52,12 @@ class Customer extends \common\models\base\BaseModel
     public function rules()
     {
         return [
-            [['merchant_id', 'sore_id', 'slot', 'nature_id', 'level', 'creator_id', 'owner_id', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['act_time', 'extend'], 'required'],
+            [['merchant_id', 'store_id', 'slot', 'nature_id', 'level', 'creator_id', 'owner_id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['act_time'], 'required'],
             [['act_time'], 'safe'],
             [['extend'], 'string'],
+            [['banquet_manager'], 'string','max'=>30],
+            [['customer_sn'], 'string', 'max' => 32],
             [['title'], 'string', 'max' => 255],
             [['act_place', 'api_address'], 'string', 'max' => 100],
             [['address'], 'string', 'max' => 200],
@@ -56,9 +65,65 @@ class Customer extends \common\models\base\BaseModel
         ];
     }
 
+    /**
+     * 客户决策人关联方法
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPolicy()
+    {
+        return $this->hasOne( Contact::class,['customer_id'=>'id'] )->where(['is_main'=>WhetherEnum::ENABLED]);
+    }
+
+    /**
+     * 客户联系人关联方法
+     * @return \yii\db\ActiveQuery
+     */
     public function getContact()
     {
-        return $this->hasMany( Contact::class,['customer_id'=>'id'] );
+        return $this->hasMany(Contact::class,['customer_id'=>'id']);
+    }
+
+    public function create($data)
+    {
+        $tran = Yii::$app->db->beginTransaction();
+        try {
+            $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].NatureEnum::getValue($data['Customer']['nature_id']);
+            if( !$this->load($data) || !$this->save() ){
+                throw new \Exception('客户信息有误，存储失败！');
+            }
+            $contact = new Contact();
+            $contact->customer_id = $this->id;
+            $contact->is_main = WhetherEnum::ENABLED;
+            $contact->load($data);
+            if( !$contact->save() ){
+                throw new \Exception('客户信息有误，存储失败！');
+            }
+            $tran->commit();
+        }catch ( \Exception $e){
+            //操作回滚
+            $tran->rollBack();
+        }
+        return true;
+    }
+
+    public function getCreate()
+    {
+        return $this->hasOne( Member::class,['id'=>'creator_id'] );
+    }
+
+    public function getOwner()
+    {
+        return $this->hasOne( Member::class,['id'=>'owner_id'] );
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord) {
+            $this->creator_id = Yii::$app->user->getId();
+            $this->owner_id = Yii::$app->user->getId();
+            $this->store_id = 1;
+        }
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -68,8 +133,9 @@ class Customer extends \common\models\base\BaseModel
     {
         return [
             'id' => 'ID',
+            'customer_sn' => '客户编号',
             'merchant_id' => 'Merchant ID',
-            'sore_id' => 'Sore ID',
+            'store_id' => 'Sore ID',
             'title' => '客户名称',
             'act_time' => '活动时间',
             'slot' => '时段',
@@ -81,6 +147,7 @@ class Customer extends \common\models\base\BaseModel
             'extend' => '扩展',
             'remark' => '备注',
             'creator_id' => '创建人',
+            'banquet_manager' => '宴会经理',
             'owner_id' => '负责人',
             'status' => '状态',
             'created_at' => '创建时间',

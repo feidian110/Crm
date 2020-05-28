@@ -5,8 +5,9 @@ use addons\Crm\common\enums\SlotEnum;
 use common\helpers\Html;
 use yii\grid\GridView;
 
-$this->title = "客户列表";
-
+$this->title = '合同列表';
+$this->params['breadcrumbs'][] = ['label' => '客户管理'];
+$this->params['breadcrumbs'][] = ['label' => $this->title];
 ?>
 
 <div class="row">
@@ -15,10 +16,7 @@ $this->title = "客户列表";
             <div class="box-header">
                 <h3 class="box-title"><?= $this->title; ?></h3>
                 <div class="box-tools">
-                    <?= Html::create(['ajax-edit'], '创建', [
-                        'data-toggle' => 'modal',
-                        'data-target' => '#ajaxModalLg',
-                    ]) ?>
+                    <?= Html::create(['create'], '添加合同') ?>
                 </div>
             </div>
             <div class="box-body table-responsive">
