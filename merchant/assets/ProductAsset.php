@@ -1,29 +1,28 @@
 <?php
 
+
 namespace addons\Crm\merchant\assets;
 
+
+
+use common\widgets\adminlet\HeadJsAsset;
 use yii\web\AssetBundle;
 
-/**
- * 静态资源管理
- *
- * Class AppAsset
- * @package addons\Crm\merchant\assets
- */
-class AppAsset extends AssetBundle
+class ProductAsset extends AssetBundle
 {
-    /**
-     * @var string
-     */
     public $sourcePath = '@addons/Crm/merchant/resources/';
 
     public $css = [
+        'product/css/main.css'
     ];
 
     public $js = [
-        'js/crm.js',
+        'product/js/select_product.js'
+
     ];
 
     public $depends = [
+        HeadJsAsset::class
+
     ];
 }

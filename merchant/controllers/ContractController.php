@@ -5,11 +5,14 @@ namespace addons\Crm\merchant\controllers;
 
 
 use addons\Crm\common\models\contract\Contract;
+use addons\Store\common\models\product\Sku;
 use common\enums\AppEnum;
+use common\enums\StatusEnum;
 use common\models\base\SearchModel;
 use common\models\member\Member;
 use common\traits\MerchantCurd;
 use Yii;
+use yii\db\Expression;
 
 class ContractController extends BaseController
 {
@@ -59,8 +62,16 @@ class ContractController extends BaseController
     public function actionCreate()
     {
         $model = new Contract();
+        if( Yii::$app->request->isPost ){
+            $post = Yii::$app->request->post();
+            if( $model->load($post) && $model->create($post) ){
+                return $this->message('订单添加成功！', $this->redirect(['index']), 'success');
+            }
+            return $this->message($model->getMessage(), $this->redirect(['index']), 'error');
+        }
         return $this->render( $this->action->id,[
-            'model' => $model
+            'model' => $model,
+            'customer' => Yii::$app->crmService->customer->getDropDown()
         ] );
     }
 
@@ -95,18 +106,25 @@ class ContractController extends BaseController
 
     }
 
-    public function actionSelectProduct()
+
+    public function actionSelect_products()
     {
+        $product = Sku::find()
+            ->where(['merchant_id'=>$this->getMerchantId()])
+            ->andWhere( new Expression('FIND_IN_SET(:store, store_id)',[':store'=>0]) )
+            ->andWhere(['status'=>StatusEnum::ENABLED])->with('product')
+            ->asArray()->all();
+        $total = Sku::find()
+            ->where(['merchant_id'=>$this->getMerchantId()])
+            ->andWhere(new Expression('FIND_IN_SET(:store, store_id)',[':store'=>0]))
+            ->andWhere(['status'=>StatusEnum::ENABLED])->count();
+        if( Yii::$app->request->isPost ){
 
-    }
-
-    public function actionSearchUser()
-    {
-       if( Yii::$app->request->isPost ){
-           $mobile = Yii::$app->request->post('mobile');
-
-           $member = Member::findOne(['mobile'=>$mobile]);
-
-       }
+        }
+        $this->layout = "@addons/Crm/merchant/views/layouts/product";
+        return $this->render( "select_products",[
+            'product' => $product,
+            'total' => $total
+        ] );
     }
 }
