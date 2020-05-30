@@ -2,6 +2,7 @@
 
 namespace addons\Crm\common\models\contract;
 
+use common\behaviors\MerchantBehavior;
 use Yii;
 
 /**
@@ -14,7 +15,7 @@ use Yii;
  * @property string $order_id 订单
  * @property string $product_id 商品ID
  * @property string $product_name 商品名称
- * @property string $product_pictue 商品图片
+ * @property string $product_picture 商品图片
  * @property int $num 数量
  * @property string $remark 备注
  * @property int $sku_id
@@ -35,6 +36,7 @@ use Yii;
  */
 class ContractProduct extends \common\models\base\BaseModel
 {
+    use MerchantBehavior;
     /**
      * {@inheritdoc}
      */
@@ -52,11 +54,18 @@ class ContractProduct extends \common\models\base\BaseModel
             [['merchant_id', 'store_id', 'customer_id', 'order_id', 'product_id', 'num', 'sku_id', 'staff_id', 'buyer_id', 'gift_flag', 'delivery_status', 'jobs_id', 'supplier_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['price', 'cost_price', 'adjust_money', 'product_money'], 'number'],
             [['product_name'], 'string', 'max' => 100],
-            [['product_pictue', 'sku_name'], 'string', 'max' => 200],
+            [['product_picture', 'sku_name'], 'string', 'max' => 200],
             [['remark'], 'string', 'max' => 2000],
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord) {
+            $this->staff_id = Yii::$app->user->getId();
+        }
+        return parent::beforeSave($insert);
+    }
     /**
      * {@inheritdoc}
      */
@@ -70,7 +79,7 @@ class ContractProduct extends \common\models\base\BaseModel
             'order_id' => 'Order ID',
             'product_id' => 'Product ID',
             'product_name' => 'Product Name',
-            'product_pictue' => 'Product Pictue',
+            'product_picture' => 'Product Pictue',
             'num' => 'Num',
             'remark' => 'Remark',
             'sku_id' => 'Sku ID',

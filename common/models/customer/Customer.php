@@ -15,7 +15,7 @@ use yii\db\Exception;
  * This is the model class for table "{{%addon_crm_customer}}".
  *
  * @property string $id 主键
- * @property string $customer_sn 客户编号
+ * @property string $sn 客户编号
  * @property string $merchant_id 所属商户
  * @property string $store_id 所属门店
  * @property string $title 客户名称
@@ -57,7 +57,7 @@ class Customer extends \common\models\base\BaseModel
             [['act_time'], 'safe'],
             [['extend'], 'string'],
             [['banquet_manager'], 'string','max'=>30],
-            [['customer_sn'], 'string', 'max' => 32],
+            [['sn'], 'string', 'max' => 32],
             [['title'], 'string', 'max' => 255],
             [['act_place', 'api_address'], 'string', 'max' => 100],
             [['address'], 'string', 'max' => 200],
@@ -87,7 +87,7 @@ class Customer extends \common\models\base\BaseModel
     {
         $tran = Yii::$app->db->beginTransaction();
         try {
-            $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].NatureEnum::getValue($data['Customer']['nature_id']);
+            $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
             if( !$this->load($data) || !$this->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
             }
@@ -133,7 +133,7 @@ class Customer extends \common\models\base\BaseModel
     {
         return [
             'id' => 'ID',
-            'customer_sn' => '客户编号',
+            'sn' => '客户编号',
             'merchant_id' => 'Merchant ID',
             'store_id' => 'Sore ID',
             'title' => '客户名称',

@@ -17,7 +17,10 @@ class CustomerController extends OnAuthController
     public function actionIndex()
     {
         $id = Yii::$app->request->get('id');
-        $customer = Yii::$app->crmService->customer->getCustomerByCustomerID($id);
+        $customer = Customer::find()->select('id,act_time,slot,act_place,nature_id')
+            ->where(['id'=>$id])
+            ->orderBy(['act_time'=>SORT_DESC])
+            ->one();
         return $customer;
     }
 

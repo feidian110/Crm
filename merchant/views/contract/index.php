@@ -1,5 +1,7 @@
 <?php
 
+use addons\Store\common\enums\AuditStateEnum;
+use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use common\helpers\Html;
@@ -22,7 +24,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
             <div class="box-body table-responsive">
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
-                    'filterModel' => $searchModel,
+
                     //重新定义分页样式
                     'tableOptions' => [
                         'class' => 'table table-hover rf-table',
@@ -49,56 +51,68 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                             }
                         ],
                         [
-                            'attribute' => 'policy.name'
-                        ],
-
-                        [
-                            'attribute' => 'policy.mobile'
+                            'attribute' => 'groom_name',
                         ],
                         [
-                            'attribute' => 'status'
+                            'attribute' => 'bride_name'
+                        ],
+                        [
+                            'attribute' => 'contract_price',
+                            'filter' => false,
+                        ],
+                        [
+                            'attribute' => 'receive_amount',
+                            'filter' => false,
+                        ],
+                        [
+                            'attribute' => 'uncollected_amount',
+                            'filter' => false,
+                        ],
+                        [
+                            'attribute' => 'status',
+                            'value' => function ($model) {
+                                return AuditStateEnum::getValue($model->audit_status) . '<br>' .
+                                       CustomerStatusEnum::getValue($model->status);
+                            },
+                            'format' => 'raw',
                         ],
                         [
                             'attribute' => 'remark',
                             'filter' => false,
                         ],
-
                         [
-                            'attribute' => 'creator_id',
-                            'filter' => false,
-                            'value' => function ( $model ){
-                                return $model['create']['realname'] ? $model['create']['realname']: $model['create']['username'];
-                            }
-                        ],
-                        [
+                            'header' => '签订人',
                             'attribute' => 'owner_id',
                             'filter' => false,
-                            'value' => function ( $model ){
-                                return $model['owner']['realname'] ? $model['owner']['realname']: $model['owner']['username'];
-                            }
                         ],
                         [
-                            'attribute' => 'created_at',
+                            'attribute' => 'sign_time',
                             'filter' => false,
                             'value' => function ( $model ){
-                                return Yii::$app->formatter->asDatetime($model->created_at);
-                            }
+                                return Yii::$app->formatter->asDatetime($model->sign_time);
+                            },
+
                         ],
                         [
                             'header' => "操作",
                             'contentOptions' => ['class' => 'text-align-center'],
                             'class' => 'yii\grid\ActionColumn',
-                            'template' => '{ajax-edit} {change}  {destroy}',
+                            'template' => '{view}{ajax-edit} {change}  {destroy}',
                             'buttons' => [
+                                'view' => function ($url ,$model, $key){
+                                    return Html::a('查看 ',['view','id'=>$model->id],[
+
+                                    ]) ;
+                                } ,
                                 'ajax-edit' => function ($url, $model, $key) {
                                     return Html::a('编辑', ['ajax-edit', 'id' => $model->id], [
                                         'data-toggle' => 'modal',
                                         'data-target' => '#ajaxModalLg',
                                         'class' => 'green'
-                                    ]) ;
+                                    ]). '<br>'  ;
                                 },
                                 'change' => function($url,$model ){
-                                    return Html::a('转移',['change','id'=>$model->id],[
+                                    return Html::a(' 转移',['change','id'=>$model->id],[
                                         'data-toggle' => 'modal',
                                         'data-target' => '#ajaxModal',
                                         'class' => 'blue'

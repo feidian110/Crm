@@ -22,28 +22,28 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
             <?php $form = ActiveForm::begin([
                 'options' => [ 'class' => 'form-horizontal' ],
                 'fieldConfig' => [
-                    'options' => ['class' => 'form-group col-sm-6'],
-                    'labelOptions' => ['class' => 'col-sm-2 control-label'],
+                    'options' => ['class' => 'form-group col-sm-4'],
+                    'labelOptions' => ['class' => 'col-sm-4 control-label'],
                     'inputOptions' => ['class' => 'form-control'],
-                    'template' => '{label}<div class="col-sm-8">{input}{hint}</div>{error}'
+                    'template' => '{label}<div class="col-sm-8">{input}{hint}{error}</div>'
                 ]
 
             ])?>
             <div class="box-body">
-                <div class="row col-sm-6">
-                    <label class="col-sm-2 control-label">用户名：</label>
-                    <div class="col-sm-4">
-                        <div class="input-group">
-                            <?= Html::textInput('Contract[mobile]','',['class'=> 'form-control','placeholder'=> '用户手机号搜索']);?>
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-info btn-flat" id="search" onclick="searchUser()">搜索</button>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="form-group col-sm-4">
-                        <?= Html::dropDownList('Contract[buyer_id]',[],[],['class'=>'form-control','prompt'=>'请选择用户...']);?>
-                    </div>
-                </div>
+                <?= $form->field($model, 'sn')->textInput(['readonly'=>'readonly','value'=>$contract_sn]);?>
+                <?= $form->field($model, 'sign_time')->widget(kartik\datetime\DateTimePicker::class, [
+                    'language' => 'zh-CN',
+                    'layout'=>'{picker}{input}',
+                    'options' => [
+                        'value' => $model->isNewRecord ? date('Y-m-d H:i') : date('Y-m-d H:i',$model->sign_time),
+                    ],
+                    'pluginOptions' => [
+                        'format' => 'yyyy-mm-dd hh:ii',
+                        'todayHighlight' => true, // 今日高亮
+                        'autoclose' => true, // 选择后自动关闭
+                        'todayBtn' => true, // 今日按钮显示
+                    ]
+                ]);?>
                 <?= $form->field($model, 'customer_id')->dropDownList($customer,['prompt'=>'请选择客户...']);?>
                 <?= $form->field($model,'act_time')->widget(kartik\date\DatePicker::class, [
                     'language' => 'zh-CN',
@@ -57,13 +57,32 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                         'class' => 'form-control no_bor',
                     ]
                 ]);?>
-                <?= $form->field($model, 'slot')->dropDownList(SlotEnum::getMap(),['value'=>$model->isNewRecord ? SlotEnum::NOON : $model['slot']]);?>
+                <?= $form->field($model, 'slot')->dropDownList(SlotEnum::getMap(),['prompt'=>'请选择时段...']);?>
+                <?= $form->field($model, 'nature_id')->dropDownList(NatureEnum::getMap(),['prompt'=>'请选择性质...'])?>
                 <?= $form->field($model, 'act_place')->textInput();?>
-                <?= $form->field($model, 'nature_id')->dropDownList(NatureEnum::getMap())?>
+                <?= $form->field($model, 'colour')->textInput();?>
+                <?= $form->field($model, 'theme')->textInput();?>
                 <?= $form->field($model,'groom_name')->textInput();?>
                 <?= $form->field($model, 'groom_mobile')->textInput();?>
+                <?= $form->field($model, 'groom_address')->textInput();?>
                 <?= $form->field($model, 'bride_name')->textInput();?>
                 <?= $form->field($model, 'bride_mobile')->textInput();?>
+                <?= $form->field($model, 'bride_address')->textInput();?>
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-4 control-label">用户名：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <?= Html::textInput('Contract[mobile]','',['class'=> 'form-control','placeholder'=> '用户手机号搜索']);?>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-info btn-flat" id="search" onclick="searchUser()">搜索</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <?= $form->field($model, 'buyer_id')->dropDownList([],['prompt'=>'使用手机号搜索用户名...']);?>
+                <?= $form->field($model, 'contract_price')->textInput();?>
+
+
                 <div class="form-group col-sm-12">
                     <div class="form-group">
                         <div class="col-sm-1 text-right">

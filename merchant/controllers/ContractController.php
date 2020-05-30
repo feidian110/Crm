@@ -4,12 +4,13 @@
 namespace addons\Crm\merchant\controllers;
 
 
+use addons\Crm\common\enums\CrmTypeEnum;
 use addons\Crm\common\models\contract\Contract;
 use addons\Store\common\models\product\Sku;
 use common\enums\AppEnum;
 use common\enums\StatusEnum;
 use common\models\base\SearchModel;
-use common\models\member\Member;
+
 use common\traits\MerchantCurd;
 use Yii;
 use yii\db\Expression;
@@ -64,14 +65,15 @@ class ContractController extends BaseController
         $model = new Contract();
         if( Yii::$app->request->isPost ){
             $post = Yii::$app->request->post();
-            if( $model->load($post) && $model->create($post) ){
+            if( $model->create($post) ){
                 return $this->message('订单添加成功！', $this->redirect(['index']), 'success');
             }
             return $this->message($model->getMessage(), $this->redirect(['index']), 'error');
         }
         return $this->render( $this->action->id,[
             'model' => $model,
-            'customer' => Yii::$app->crmService->customer->getDropDown()
+            'customer' => Yii::$app->crmService->customer->getDropDown(),
+            'contract_sn' => Yii::$app->crmService->base->createSn($this->modelClass,CrmTypeEnum::CONTRACT)
         ] );
     }
 

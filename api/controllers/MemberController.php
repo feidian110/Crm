@@ -18,6 +18,9 @@ class MemberController extends OnAuthController
     public function actionSearchUser()
     {
         $mobile = Yii::$app->request->post('mobile');
-        return $this->modelClass::findOne(['mobile'=>$mobile]);
+        $member = $this->modelClass::find()->select('id,username')
+            ->where(['mobile'=>$mobile])
+            ->one();
+        return $member;
     }
 }

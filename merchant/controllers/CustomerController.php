@@ -4,6 +4,7 @@
 namespace addons\Crm\merchant\controllers;
 
 
+use addons\Crm\common\enums\CrmTypeEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\models\contact\Contact;
@@ -75,6 +76,7 @@ class CustomerController extends BaseController
         }
         return $this->renderAjax( $this->action->id,[
             'model' =>$model,
+            'sn' => Yii::$app->crmService->base->createSn($this->modelClass,CrmTypeEnum::CUSTOMER),
             'contact' => $contact
         ] );
     }

@@ -11,6 +11,21 @@ use Yii;
 class CustomerService extends  Service
 {
     /**
+     * 变更客户状态
+     * @param $customerId
+     * @param $status
+     * @return bool
+     */
+    public function updateStatus($customerId,$status)
+    {
+        $model = $this->getCustomerByCustomerID($customerId);
+        if( $model != null && $model::updateAll(['status'=>$status],['id'=>$customerId]) ){
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 获取客户信息下拉
      * @return array
      * @throws \yii\web\UnauthorizedHttpException
@@ -60,6 +75,8 @@ class CustomerService extends  Service
      */
     public function getCustomerByCustomerID($id)
     {
-        return Customer::findOne(['id' => $id,'merchant_id'=>$this->getMerchantId()]);
+        return Customer::findOne(['id' => $id]);
     }
+
+
 }

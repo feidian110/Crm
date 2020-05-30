@@ -1,9 +1,15 @@
 function searchUser(){
-    var mobile = $("input[name='mobile']").val();
+    var mobile = $("input[name='Contract[mobile]']").val();
     var url = '/api/crm/member/search-user';
     data = {mobile : mobile}
     $.post(url,data,function(res) {
-        alert('正确')
+        $("#contract-buyer_id").empty();
+        if( res.code ===200 && res.data !== null ){
+            $("<option></option>")
+                .val(res.data.id)
+                .text(res.data.username)
+                .appendTo($("#contract-buyer_id"));             //现在的状态是可以显示下拉列表内容，但是不能选中
+        }
     })
 }
 
@@ -12,9 +18,13 @@ $("#contract-customer_id").change(function(){
     var url = "/merapi/crm/customer/index";
     data = {id:opt}
     $.get(url,data,function (res) {
-
+        if(res.code ===200 && res.data !== null){
+            $('#contract-act_time').val(res.data.act_time);
+            $('#contract-slot').val(res.data.slot);
+            $('#contract-nature_id').val(res.data.nature_id);
+            $('#contract-act_place').val(res.data.act_place)
+        }
     })
-    alert(opt)
 });
 
 /**

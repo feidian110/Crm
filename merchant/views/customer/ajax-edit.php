@@ -27,7 +27,7 @@ $form = ActiveForm::begin([
         <div class="modal-body">
             <div class="row">
                 <div class="col-xs-6">
-                    <?= $form->field($model,'customer_sn')->textInput();?>
+                    <?= $form->field($model,'sn')->textInput(['readonly'=>'readonly','value'=>$sn]);?>
                     <?= $form->field($model, 'act_time')->widget(kartik\date\DatePicker::class, [
                         'language' => 'zh-CN',
                         'layout'=>'{picker}{input}',
@@ -39,6 +39,7 @@ $form = ActiveForm::begin([
                         ],
                         'options'=>[
                             'class' => 'form-control no_bor',
+                            'autocomplete' => 'off'
                         ]
                     ]);?>
                     <?= $form->field($model,'act_place')->textInput();?>
