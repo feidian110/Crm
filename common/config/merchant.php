@@ -11,6 +11,10 @@ return [
         ],
         // 子模块配置
         'modules' => [
+            //财务管理
+            'finance' => [
+                'class' => 'addons\Crm\merchant\modules\finance\Module',
+            ],
         ],
     ],
 

@@ -1,5 +1,6 @@
 <?php
 
+use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use common\helpers\Html;
@@ -58,7 +59,11 @@ $this->title = "客户列表";
                             'attribute' => 'policy.mobile'
                         ],
                         [
-                            'attribute' => 'status'
+                            'attribute' => 'status',
+                            'format' => 'raw',
+                            'value' => function ( $model ){
+                                return CustomerStatusEnum::getValue($model->status);
+                            }
                         ],
                         [
                             'attribute' => 'remark',

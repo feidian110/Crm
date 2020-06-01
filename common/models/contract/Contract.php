@@ -9,6 +9,7 @@ use addons\Crm\common\models\customer\Customer;
 use addons\Store\common\models\product\Sku;
 use common\behaviors\MerchantBehavior;
 use common\enums\StatusEnum;
+use common\models\merchant\Member;
 use Yii;
 
 /**
@@ -130,6 +131,23 @@ class Contract extends \common\models\base\BaseModel
         return true;
     }
 
+    /**
+     * 合同创建人的关联方法
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreator()
+    {
+        return $this->hasOne( Member::class,['id' => 'creator_id'] );
+    }
+    /**
+     * 负责人关联方法
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOwner()
+    {
+        return $this->hasOne( Member::class,['id' => 'owner_id'] );
+    }
+
     public function beforeSave($insert)
     {
         if ($this->isNewRecord) {
@@ -159,8 +177,8 @@ class Contract extends \common\models\base\BaseModel
             'nature_id' => '性质',
             'colour' => '色系',
             'theme' => '主题风格',
-            'groom_name' => '新郎姓名',
-            'bride_name' => '新娘姓名',
+            'groom_name' => '新郎',
+            'bride_name' => '新娘',
             'groom_mobile' => '新郎电话',
             'bride_mobile' => '新娘电话',
             'groom_address' => '新郎地址',

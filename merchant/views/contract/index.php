@@ -59,20 +59,35 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                         [
                             'attribute' => 'contract_price',
                             'filter' => false,
+                            'value' => function ($model) {
+                                return round($model['contract_price']);
+                            },
                         ],
                         [
                             'attribute' => 'receive_amount',
                             'filter' => false,
+                            'value' => function ($model) {
+                                return round($model['receive_amount']);
+                            },
                         ],
                         [
                             'attribute' => 'uncollected_amount',
                             'filter' => false,
+                            'value' => function ($model) {
+                                return round($model['uncollected_amount']);
+                            },
+                        ],
+                        [
+                            'attribute' => 'audit_status',
+                            'value' => function ($model) {
+                                return AuditStateEnum::getValue($model->audit_status);
+                            },
+                            'format' => 'raw',
                         ],
                         [
                             'attribute' => 'status',
                             'value' => function ($model) {
-                                return AuditStateEnum::getValue($model->audit_status) . '<br>' .
-                                       CustomerStatusEnum::getValue($model->status);
+                                return CustomerStatusEnum::getValue($model->status);
                             },
                             'format' => 'raw',
                         ],
@@ -83,6 +98,9 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                         [
                             'header' => '签订人',
                             'attribute' => 'owner_id',
+                            'value' => function ($model) {
+                                return $model['owner']['realname'] ?? $model['owner']['username'];
+                            },
                             'filter' => false,
                         ],
                         [
@@ -97,26 +115,17 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                             'header' => "操作",
                             'contentOptions' => ['class' => 'text-align-center'],
                             'class' => 'yii\grid\ActionColumn',
-                            'template' => '{view}{ajax-edit} {change}  {destroy}',
+                            'template' => '{view} {edit} {destroy}',
                             'buttons' => [
                                 'view' => function ($url ,$model, $key){
                                     return Html::a('查看 ',['view','id'=>$model->id],[
 
-                                    ]) ;
+                                    ]) . '<br>';
                                 } ,
-                                'ajax-edit' => function ($url, $model, $key) {
-                                    return Html::a('编辑', ['ajax-edit', 'id' => $model->id], [
-                                        'data-toggle' => 'modal',
-                                        'data-target' => '#ajaxModalLg',
+                                'edit' => function ($url, $model, $key) {
+                                    return Html::a('编辑', ['edit', 'id' => $model->id], [
                                         'class' => 'green'
                                     ]). '<br>'  ;
-                                },
-                                'change' => function($url,$model ){
-                                    return Html::a(' 转移',['change','id'=>$model->id],[
-                                        'data-toggle' => 'modal',
-                                        'data-target' => '#ajaxModal',
-                                        'class' => 'blue'
-                                    ]);
                                 },
 
                                 'destroy' => function ($url, $model, $key) {

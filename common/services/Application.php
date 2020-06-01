@@ -8,6 +8,7 @@ use common\components\Service;
  * @package addons\Crm\common\services
  * @property \addons\Crm\common\services\field\FieldService $crmField 自定义字段
  * @property \addons\Crm\common\services\base\BaseService $base 基础
+ * @property \addons\Crm\common\services\base\CrmStatService $crmStat 数据统计
  * @property \addons\Crm\common\services\common\LeadsService $leads 线索
  * @property \addons\Crm\common\services\common\CustomerService $customer 客户
  * @property \addons\Crm\common\services\common\ContactService $contact 联系人
@@ -18,6 +19,7 @@ class Application extends Service
 {
     public $childService = [
         'base' => 'addons\Crm\common\services\base\BaseService',
+        'crmStat' => 'addons\Crm\common\services\base\CrmStatService',
         'crmField' => 'addons\Crm\common\services\field\FieldService',
         'leads' => 'addons\Crm\common\services\common\LeadsService',
         'customer' => 'addons\Crm\common\services\common\CustomerService',
