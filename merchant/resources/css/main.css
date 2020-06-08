@@ -1,0 +1,31 @@
+ul,ol,li,dl,dt,dd,p,h1,h2,h3,h4,h5,h6,form,fieldset{margin:0;padding:0}
+.page{background-color:#fff;min-width:1000px;padding:20px 20px 0;text-align:left;}
+
+.ncap-order-style{width:1000px;margin:0 auto}
+
+.ncap-order-details{border:solid 1px #2cbca3;position:relative;z-index:1}
+.ncap-order-details .tabs-nav{font-size:0;position:absolute;z-index:1;top:-30px;left:20px}
+.ncap-order-details .tabs-nav li{font-size:12px;display:inline-block;margin-right:5px}
+.ncap-order-details .tabs-nav li a{line-height:20px;color:#777;background-color:#F5F5F5;display:block;height:20px;padding:4px 19px;border-style:solid;border-width:1px;border-color:#F5F5F5 #F5F5F5 #2cbca3 #F5F5F5;border-radius:4px 4px 0 0}
+.ncap-order-details .tabs-nav li.current a{background-color:#FFF;color:#2cbca3;font-weight:600;border-color:#2cbca3 #2cbca3 #FFFFFF #2cbca3}
+.ncap-order-details .tabs-panels{padding:9px 19px}
+.ncap-order-details h4{font-size:12px;line-height:20px;font-weight:600;color:#333;height:20px;margin-bottom:8px}
+.ncap-order-details .misc-info,.ncap-order-details .addr-note,.ncap-order-details .contact-info{padding-bottom:10px;margin-bottom:10px;border-bottom:solid 1px #E6E6E6}
+.ncap-order-details .tabs-hide{display:none}
+.ncap-order-details .tabs-panels dl{font-size:0;padding-bottom:5px}
+.ncap-order-details .tabs-panels dt,.ncap-order-details .tabs-panels dd{font-size:12px;line-height:20px;vertical-align:top;display:inline-block;max-width:720px}
+.ncap-order-details .tabs-panels dt{color:#999;width:100px;text-align:right}
+.ncap-order-details .tabs-panels dd{color:#333;min-width:200px}
+.ncap-order-details table{border:solid 1px #D7D7D7;width:100%}
+.ncap-order-details table thead th,.ncap-order-details table tbody td{text-align:center;min-height:20px;padding:9px}
+.ncap-order-details table thead th{background-color:#edfbf8;border-bottom:solid 1px #D7D7D7}
+.ncap-order-details table tbody td{border-bottom:solid 1px #D7D7D7;word-break:break-all}
+.ncap-order-details table .goods-thumb{width:30px;height:30px}
+.ncap-order-details table thead tr th:last-child,.ncap-order-details table tbody tr td:last-child{width:36%}
+.ncap-order-details table .goods-thumb a{line-height:0;background-color:#FFF;text-align:center;vertical-align:middle;display:table-cell;*display:block;width:30px;height:30px;overflow:hidden}
+.ncap-order-details table .goods-thumb a img{max-width:30px;max-height:30px;margin-top:expression(30-this.height/2)}
+.ncap-order-details .total-amount{text-align:right;padding:10px 0}
+.ncap-order-details .total-amount h3{font-size:14px;font-weight:normal;color:#777;line-height:24px}
+.ncap-order-details .total-amount h3 strong{font-size:20px;color:#ff3300}
+.ncap-order-details .total-amount h4{color:#999;font-size:12px;font-weight:normal;line-height:20px}
+.ncap-order-details .total-amount h5{}

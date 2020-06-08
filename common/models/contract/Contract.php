@@ -123,12 +123,15 @@ class Contract extends \common\models\base\BaseModel
             if( !Yii::$app->crmService->customer->updateStatus($data['Contract']['customer_id'],CustomerStatusEnum::SIGN)){
                 throw new \Exception('客户状态更新失败！');
             }
+            if( !Yii::$app->financeService->invoice->createReceivables($this) ){
+                throw new \Exception('合同添加票据失败！');
+            }
+
             $tran->commit();            //只有执行了commit(),对于上面数据库的操作才会真正执行
         }catch ( \Exception $e) {
             $tran->rollBack();
             return $e->getMessage();
         }
-        return true;
     }
 
     /**

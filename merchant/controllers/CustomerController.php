@@ -34,16 +34,24 @@ class CustomerController extends BaseController
             ],
             'pageSize' => $this->pageSize
         ]);
-
+        $data = Yii::$app->request->get();
+        $start_time = isset($data['start_time']) ? $data['start_time'] : date('Y-m-01');
+        $end_time = isset($data['end_time']) ? $data['end_time'] : date( 'Y-m-t' );
+        $time = isset($data['queryDate']) ? ['between','act_time',$data['start_time'],$data['end_time']] : ['between','act_time',date('Y-m-01'),date( 'Y-m-t')];
+        $title = isset($data['title']) ? $data['title'] : "";
         $dataProvider = $searchModel
             ->search(Yii::$app->request->queryParams);
         $dataProvider->query
-
+            ->where($time)
+            ->andWhere($title ? ['like','title',$data['title']] : [] )
             ->andFilterWhere(['merchant_id' => $this->getMerchantId()]);
 
         return $this->render($this->action->id, [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'startTime' => $start_time,
+            'endTime' => $end_time,
+            'title' => $title
         ]);
     }
 
@@ -81,6 +89,14 @@ class CustomerController extends BaseController
         ] );
     }
 
+    public function actionView()
+    {
+        $id = Yii::$app->request->get('id');
+        $model = $this->findModel($id);
+        return $this->render( $this->action->id,[
+            'model' =>$model
+        ] );
+    }
     /**
      * 获取客户主要联系人信息
      * @param $id

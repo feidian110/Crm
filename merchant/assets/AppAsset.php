@@ -18,6 +18,7 @@ class AppAsset extends AssetBundle
     public $sourcePath = '@addons/Crm/merchant/resources/';
 
     public $css = [
+        'css/main.css'
     ];
 
     public $js = [

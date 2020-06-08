@@ -42,7 +42,7 @@ class CustomerService extends  Service
     }
 
     /**
-     * 获取门店的所有客户信息
+     * 获取门店的未签客户信息
      * @return array|\yii\db\ActiveRecord[]
      */
     public function getStoreAllCustomer()
@@ -56,7 +56,7 @@ class CustomerService extends  Service
     }
 
     /**
-     * 获取商户所有的客户信息
+     * 获取商户所有的未签客户信息
      * @return array|\yii\db\ActiveRecord[]
      */
     public function getAllCustomer()
@@ -79,4 +79,13 @@ class CustomerService extends  Service
     }
 
 
+    public function getNormalDropdown()
+    {
+        $model = Customer::find()
+            ->where(['merchant_id'=>$this->getMerchantId()])
+            ->andWhere(['between','status',CustomerStatusEnum::ENABLED,CustomerStatusEnum::EXECUTE])
+            ->orderBy(['act_time'=>SORT_DESC])
+            ->asArray()->all();
+        return ArrayHelper::map($model,'id','title');
+    }
 }

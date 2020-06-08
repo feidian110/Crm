@@ -5,6 +5,8 @@ namespace addons\Crm\common\models\customer;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\models\contact\Contact;
+use addons\Finance\common\models\report\Invoice;
+use addons\Store\common\models\store\Store;
 use common\behaviors\MerchantBehavior;
 use common\enums\WhetherEnum;
 use common\models\merchant\Member;
@@ -114,6 +116,11 @@ class Customer extends \common\models\base\BaseModel
     public function getOwner()
     {
         return $this->hasOne( Member::class,['id'=>'owner_id'] );
+    }
+
+    public function getStore()
+    {
+        return $this->hasOne( Store::class,  [ 'id' => 'store_id' ] );
     }
 
     public function beforeSave($insert)

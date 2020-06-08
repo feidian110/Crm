@@ -5,11 +5,20 @@ use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use common\helpers\Html;
+use common\helpers\Url;
+use yii\widgets\ActiveForm;
 use yii\grid\GridView;
+use kartik\daterange\DateRangePicker;
 
 $this->title = '合同列表';
 $this->params['breadcrumbs'][] = ['label' => '客户管理'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
+
+$addon = <<< HTML
+<span class="input-group-addon">
+    <i class="glyphicon glyphicon-calendar"></i>
+</span>
+HTML;
 ?>
 
 <div class="row">
@@ -22,6 +31,39 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                 </div>
             </div>
             <div class="box-body table-responsive">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <?php $form = ActiveForm::begin([
+                            'action' => Url::to(['index']),
+                            'method' => 'get',
+                        ]); ?>
+                        <div class="col-sm-2">
+                            <div class="input-group drp-container">
+                                <?= DateRangePicker::widget([
+                                    'name' => 'queryDate',
+                                    'value' => date('Y-m-d') . '-' . date('Y-m-d'),
+                                    'readonly' => 'readonly',
+                                    'useWithAddon' => true,
+                                    'convertFormat' => true,
+                                    'startAttribute' => 'start_time',
+                                    'endAttribute' => 'end_time',
+                                    'startInputOptions' => ['value' => $startTime],
+                                    'endInputOptions' => ['value' => $endTime],
+                                    'pluginOptions' => [
+                                        'locale' => ['format' => 'Y-m-d'],
+                                    ]
+                                ]) . $addon;?>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group m-b">
+                                <input type="text" class="form-control" name="title" placeholder="标题" value="<?=$title;?>"/>
+                                <span class="input-group-btn"><button class="btn btn-white"><i class="fa fa-search"></i> 搜索</button></span>
+                            </div>
+                        </div>
+                        <?php ActiveForm::end(); ?>
+                    </div>
+                </div>
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
 

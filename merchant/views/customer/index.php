@@ -4,9 +4,18 @@ use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use common\helpers\Html;
+use common\helpers\Url;
 use yii\grid\GridView;
+use yii\widgets\ActiveForm;
+use kartik\daterange\DateRangePicker;
 
 $this->title = "客户列表";
+
+$addon = <<< HTML
+<span class="input-group-addon">
+    <i class="glyphicon glyphicon-calendar"></i>
+</span>
+HTML;
 
 ?>
 
@@ -23,6 +32,39 @@ $this->title = "客户列表";
                 </div>
             </div>
             <div class="box-body table-responsive">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <?php $form = ActiveForm::begin([
+                            'action' => Url::to(['index']),
+                            'method' => 'get',
+                        ]); ?>
+                        <div class="col-sm-2">
+                            <div class="input-group drp-container">
+                                <?= DateRangePicker::widget([
+                                    'name' => 'queryDate',
+                                    'value' => date('Y-m-d') . '-' . date('Y-m-d'),
+                                    'readonly' => 'readonly',
+                                    'useWithAddon' => true,
+                                    'convertFormat' => true,
+                                    'startAttribute' => 'start_time',
+                                    'endAttribute' => 'end_time',
+                                    'startInputOptions' => ['value' => $startTime],
+                                    'endInputOptions' => ['value' => $endTime],
+                                    'pluginOptions' => [
+                                        'locale' => ['format' => 'Y-m-d'],
+                                    ]
+                                ]) . $addon;?>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="input-group m-b">
+                                <input type="text" class="form-control" name="title" placeholder="标题" value="<?=$title;?>"/>
+                                <span class="input-group-btn"><button class="btn btn-white"><i class="fa fa-search"></i> 搜索</button></span>
+                            </div>
+                        </div>
+                        <?php ActiveForm::end(); ?>
+                    </div>
+                </div>
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
@@ -95,14 +137,19 @@ $this->title = "客户列表";
                             'header' => "操作",
                             'contentOptions' => ['class' => 'text-align-center'],
                             'class' => 'yii\grid\ActionColumn',
-                            'template' => '{ajax-edit} {change}  {destroy}',
+                            'template' => '{view} {ajax-edit} {change}  {destroy}',
                             'buttons' => [
+                                'view' => function( $url, $model,$key ){
+                                    return Html::a('查看',['view','id'=>$model->id],[
+                                        'class' => 'green'
+                                    ]);
+                                },
                                 'ajax-edit' => function ($url, $model, $key) {
                                     return Html::a('编辑', ['ajax-edit', 'id' => $model->id], [
                                         'data-toggle' => 'modal',
                                         'data-target' => '#ajaxModalLg',
-                                        'class' => 'green'
-                                    ]) ;
+                                        'class' => 'orange'
+                                    ]). '<br>' ;
                                 },
                                 'change' => function($url,$model ){
                                     return Html::a('转移',['change','id'=>$model->id],[
