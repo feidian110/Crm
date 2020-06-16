@@ -46,8 +46,8 @@ class ContractController extends BaseController
         }
         $data = Yii::$app->request->get();
         $start_time = isset($data['start_time']) ? $data['start_time'] : date('Y-m-01');
-        $end_time = isset($data['end_time']) ? $data['end_time'] : date( 'Y-m-t' );
-        $time = isset($data['queryDate']) ? ['between','act_time',$data['start_time'],$data['end_time']] : ['between','act_time',date('Y-m-01'),date( 'Y-m-t')];
+        $end_time = isset($data['end_time']) ? $data['end_time'] : date( 'Y-12-31' );
+        $time = isset($data['queryDate']) ? ['between','act_time',$data['start_time'],$data['end_time']] : [];
         $title = isset($data['title']) ? $data['title'] : "";
         $dataProvider = $searchModel
             ->search(Yii::$app->request->queryParams);

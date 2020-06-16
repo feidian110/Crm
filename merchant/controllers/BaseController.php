@@ -2,6 +2,7 @@
 
 namespace addons\Crm\merchant\controllers;
 
+use common\enums\AppEnum;
 use common\helpers\AddonHelper;
 use Yii;
 use common\controllers\AddonsController;
@@ -14,6 +15,7 @@ use common\controllers\AddonsController;
  */
 class BaseController extends AddonsController
 {
+    protected $store_id;
     /**
     * @var string
     */
@@ -33,5 +35,15 @@ class BaseController extends AddonsController
         }
 
         parent::init();
+    }
+
+    public function getStoreId()
+    {
+        $role = Yii::$app->services->rbacAuthRole->getRole();
+
+        if($role['pid'] == 0 && in_array(Yii::$app->id, [AppEnum::MERCHANT, AppEnum::BACKEND])){
+            return null;
+        }
+        return Yii::$app->user->identity->store_id;
     }
 }

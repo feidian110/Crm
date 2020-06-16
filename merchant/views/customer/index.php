@@ -34,10 +34,12 @@ HTML;
             <div class="box-body table-responsive">
                 <div class="row">
                     <div class="col-sm-12">
+
                         <?php $form = ActiveForm::begin([
                             'action' => Url::to(['index']),
                             'method' => 'get',
                         ]); ?>
+
                         <div class="col-sm-2">
                             <div class="input-group drp-container">
                                 <?= DateRangePicker::widget([
