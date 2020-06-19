@@ -95,7 +95,16 @@ class Customer extends \common\models\base\BaseModel
         if( !$this->load($data) || !$this->save() ){
             throw new \Exception('客户信息有误，存储失败！');
         }
-        var_dump($this->getErrors());
+        $contact = new Contact();
+        $contact->customer_id = $this->id;
+        $contact->is_main = WhetherEnum::ENABLED;
+        $contact->owner_id = $this->owner_id;
+        $contact->store_id = $this->store_id;
+        $contact->load($data);
+        if( !$contact->save() ){
+            throw new \Exception('客户信息有误，存储失败！');
+        }
+        var_dump($this->getErrors(),$contact->getErrors());
         die;
         $tran = Yii::$app->db->beginTransaction();
         try {
