@@ -184,7 +184,7 @@ class BaseService extends Service
     }
 
 
-    public function updateActionLog($staff_id, $types, $action_id, $oldData = [], $newData = [], $content = '')
+    public function updateActionLog($store_id,$staff_id, $types, $action_id, $oldData = [], $newData = [], $content = '')
     {
         if (is_array($oldData) && is_array($newData) && $staff_id) {
             $differentData = array_diff_assoc($newData, $oldData); //获取差异值
@@ -192,6 +192,7 @@ class BaseService extends Service
             $field_arr = $fieldModel->getField(['types' => $types,'unFormType' => ['file','form']]); //获取字段属性
         }elseif ($content){
             $a = new ActionRecord();
+            $a->store_id = $store_id;
             $a-> staff_id = $staff_id;
             $a-> types = $types;
             $a-> action_id = $action_id;
