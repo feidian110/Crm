@@ -92,7 +92,7 @@ class Customer extends \common\models\base\BaseModel
         $tran = Yii::$app->db->beginTransaction();
         try {
             $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
-            $this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
+            //$this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
             if( !$this->load($data) || !$this->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
             }
@@ -104,6 +104,22 @@ class Customer extends \common\models\base\BaseModel
             $contact->load($data);
             if( !$contact->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
+            }
+            Yii::$app->crmService->base->updateActionLog($this->store_id,Yii::$app->user->id,CrmTypeEnum::CUSTOMER,$this->id,'','','创建了客户');
+            $notice = WorkNotice::findOne(['merchant_id'=>$this->merchant_id,'store_id'=>$this->store_id]);
+            if ( $notice && $notice['open_notice']== 1 && !empty($notice['customer_key']) ){
+                $arr = [
+                    'key' => $notice['customer_key'],
+                    'content' => ' **新增:客户信息 <font color="info">1 条</font>,详情如下：**
+                                 > 时间：'.$this->act_time.'-'.SlotEnum::getValue($this->slot).'                 
+                                 > 地点：'.$this->act_place.'
+                                 > 性质：'.NatureEnum::getValue($this->nature_id).'
+                                 > 负责人：'.$this->owner['realname'].'
+                                 > 创建人：'.$this->create['realname'].'
+                                 > 创建时间: '.date('Y-m-d H:i',$this->created_at).'
+                                 '
+                ];
+                Yii::$app->workService->message->markdown($arr,'customer');
             }
 
             $tran->commit();
