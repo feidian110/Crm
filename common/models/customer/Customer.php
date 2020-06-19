@@ -89,27 +89,10 @@ class Customer extends \common\models\base\BaseModel
 
     public function create($data)
     {
-
-        $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
-        $this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
-        if( !$this->load($data) || !$this->save() ){
-            throw new \Exception('客户信息有误，存储失败！');
-        }
-        $contact = new Contact();
-        $contact->customer_id = $this->id;
-        $contact->is_main = WhetherEnum::ENABLED;
-        $contact->owner_id = $this->owner_id;
-        $contact->store_id = $this->store_id;
-        $contact->load($data);
-        if( !$contact->save() ){
-            throw new \Exception('客户信息有误，存储失败！');
-        }
-        var_dump($this->getErrors(),$contact->getErrors());
-        die;
         $tran = Yii::$app->db->beginTransaction();
         try {
             $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
-            //$this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
+            $this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
             if( !$this->load($data) || !$this->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
             }
