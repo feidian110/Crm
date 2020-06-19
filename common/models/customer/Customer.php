@@ -105,7 +105,7 @@ class Customer extends \common\models\base\BaseModel
             if( !$contact->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
             }
-            Yii::$app->crmService->base->updateActionLog($this->store_id,Yii::$app->user->id,CrmTypeEnum::CUSTOMER,$this->id,'','','创建了客户');
+            //Yii::$app->crmService->base->updateActionLog($this->store_id,Yii::$app->user->id,CrmTypeEnum::CUSTOMER,$this->id,'','','创建了客户');
             $notice = WorkNotice::findOne(['merchant_id'=>$this->merchant_id,'store_id'=>$this->store_id]);
             if ( $notice && $notice['open_notice']== 1 && !empty($notice['customer_key']) ){
                 $arr = [
