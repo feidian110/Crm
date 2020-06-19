@@ -2,6 +2,7 @@
 
 use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\enums\NatureEnum;
+use common\enums\AppEnum;
 use common\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,7 +11,7 @@ $this->title = '创建合同';
 $this->params['breadcrumbs'][] = ['label' => '客户管理'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 
-
+$role = Yii::$app->services->rbacAuthRole->getRole();
 ?>
 
 <div class="row">
@@ -44,7 +45,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                         'todayBtn' => true, // 今日按钮显示
                     ]
                 ]);?>
-                <?= $form->field($model, 'customer_id')->dropDownList($customer,['prompt'=>'请选择客户...']);?>
+                <?php if( $role['pid'] == 0 && in_array(Yii::$app->id, [AppEnum::MERCHANT, AppEnum::BACKEND]) ){ echo $form->field($model, 'store_id')->dropDownList($store,['prompt'=>'请选择...']); } ;?>
+                <?= $form->field($model, 'customer_id')->dropDownList($customer,['prompt'=>'请选择...']);?>
                 <?= $form->field($model,'act_time')->widget(kartik\date\DatePicker::class, [
                     'language' => 'zh-CN',
                     'layout'=>'{picker}{input}',

@@ -4,6 +4,7 @@ namespace addons\Crm\common\models\customer;
 
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
+use addons\Crm\common\models\base\WorkNotice;
 use addons\Crm\common\models\contact\Contact;
 use addons\Finance\common\models\report\Invoice;
 use addons\Store\common\models\store\Store;
@@ -90,16 +91,35 @@ class Customer extends \common\models\base\BaseModel
         $tran = Yii::$app->db->beginTransaction();
         try {
             $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
+            $this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
             if( !$this->load($data) || !$this->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
             }
             $contact = new Contact();
             $contact->customer_id = $this->id;
             $contact->is_main = WhetherEnum::ENABLED;
+            $contact->owner_id = $this->owner_id;
+            $contact->store_id = $this->store_id;
             $contact->load($data);
             if( !$contact->save() ){
                 throw new \Exception('客户信息有误，存储失败！');
             }
+            $notice = WorkNotice::findOne(['merchant_id'=>$this->merchant_id,'store_id'=>$this->store_id]);
+            if ( $notice && $notice['open_notice']== 1 && !empty($notice['customer_key']) ){
+                $arr = [
+                    'key' => $notice['customer_key'],
+                    'content' => ' **新增:客户信息 <font color="info">1 条</font>,详情如下：**
+                                 > 时间：'.$this->act_time.'-'.SlotEnum::getValue($this->slot).'                 
+                                 > 地点：'.$this->act_place.'
+                                 > 性质：'.NatureEnum::getValue($this->nature_id).'
+                                 > 负责人：'.$this->owner['realname'].'
+                                 > 创建人：'.$this->create['realname'].'
+                                 > 创建时间: '.date('Y-m-d H:i',$this->created_at).'
+                                 '
+                ];
+                Yii::$app->workService->message->markdown($arr,'customer');
+            }
+
             $tran->commit();
         }catch ( \Exception $e){
             //操作回滚
@@ -127,8 +147,6 @@ class Customer extends \common\models\base\BaseModel
     {
         if ($this->isNewRecord) {
             $this->creator_id = Yii::$app->user->getId();
-            $this->owner_id = Yii::$app->user->getId();
-            $this->store_id = 1;
         }
         return parent::beforeSave($insert);
     }
@@ -142,7 +160,7 @@ class Customer extends \common\models\base\BaseModel
             'id' => 'ID',
             'sn' => '客户编号',
             'merchant_id' => 'Merchant ID',
-            'store_id' => 'Sore ID',
+            'store_id' => '所属门店',
             'title' => '客户名称',
             'act_time' => '活动时间',
             'slot' => '时段',

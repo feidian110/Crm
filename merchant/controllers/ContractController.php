@@ -83,6 +83,7 @@ class ContractController extends BaseController
         }
         return $this->render( $this->action->id,[
             'model' => $model,
+            'store' => Yii::$app->storeService->store->getDropDown(),
             'customer' => Yii::$app->crmService->customer->getDropDown(),
             'contract_sn' => Yii::$app->crmService->base->createSn($this->modelClass,CrmTypeEnum::CONTRACT)
         ] );

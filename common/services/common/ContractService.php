@@ -4,6 +4,7 @@ namespace addons\Crm\common\services\common;
 
 use addons\Crm\common\models\contract\Contract;
 use addons\Crm\common\models\contract\ContractProduct;
+use addons\Store\common\enums\OrderStatusEnum;
 use common\components\Service;
 use common\enums\StatusEnum;
 
@@ -37,6 +38,19 @@ class ContractService extends Service
             ->andWhere(['>=','status',StatusEnum::DISABLED])
             ->sum('product_money');
         return $total;
+    }
+
+    public function getContractByCustomerId($id)
+    {
+        $contract = Contract::find()
+            ->where(['customer_id' => $id])
+            ->filterWhere(['merchant_id' => $this->getMerchantId()])
+            ->andFilterWhere(['>=','status',OrderStatusEnum::NOT_PAY])
+            ->orderBy(['act_time' => SORT_DESC])
+            ->asArray()
+            ->all();
+        return $contract;
+
     }
 
     /**

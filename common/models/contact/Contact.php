@@ -58,8 +58,6 @@ class Contact extends \common\models\base\BaseModel
     {
         if ($this->isNewRecord) {
             $this->creator_id = Yii::$app->user->getId();
-            $this->owner_id = Yii::$app->user->getId();
-            $this->store_id = 1;
         }
         return parent::beforeSave($insert);
     }

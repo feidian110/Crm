@@ -5,6 +5,7 @@ use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use common\helpers\Html;
 use common\helpers\Url;
+use kartik\date\DatePicker;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 use kartik\daterange\DateRangePicker;
@@ -82,18 +83,36 @@ HTML;
                         ],
                         [
                             'attribute' => 'act_time',
+                            'headerOptions' => ['class' => 'col-md-2'],
                             'value' => function ( $model ){
                                 return $model->act_time . '-' .SlotEnum::getValue($model->slot);
-                            }
+                            },
+                            'filter' => DatePicker::widget([
+                                    'name' => 'act_time',
+                                    'layout'=>'{picker}{input}',
+                                    'options' => ['placeholder' => '请选择活动日期'],
+                                    'pluginOptions' => [
+                                        'format' => 'yyyy-mm-dd',
+                                        'todayHighlight' => true, // 今日高亮
+                                        'autoclose' => true, // 选择后自动关闭
+                                        'todayBtn' => true, // 今日按钮显示
+                                    ],
+                            ])
                         ],
                         [
-                            'attribute' => 'act_place'
+                            'attribute' => 'act_place',
+                            'headerOptions' => ['class' => 'col-md-1'],
                         ],
                         [
                             'attribute' => 'nature_id',
                             'value' => function($model){
                                 return NatureEnum::getValue($model->nature_id);
-                            }
+                            },
+                            'filter' => Html::activeDropDownList($searchModel, 'nature_id', NatureEnum::getMap(), [
+                                    'prompt' => '全部',
+                                    'class' => 'form-control'
+                                ]
+                            )
                         ],
                         [
                             'attribute' => 'policy.name'
@@ -107,7 +126,12 @@ HTML;
                             'format' => 'raw',
                             'value' => function ( $model ){
                                 return CustomerStatusEnum::getValue($model->status);
-                            }
+                            },
+                            'filter' => Html::activeDropDownList($searchModel, 'status', CustomerStatusEnum::getMap(), [
+                                    'prompt' => '全部',
+                                    'class' => 'form-control'
+                                ]
+                            )
                         ],
                         [
                             'attribute' => 'remark',

@@ -3,6 +3,9 @@ namespace addons\Crm\common\services\base;
 
 use addons\Crm\common\enums\CrmTypeEnum;
 use addons\Crm\common\enums\TimeRangeEnum;
+
+use addons\Crm\common\models\base\ActionRecord;
+use addons\Crm\common\models\base\Field;
 use common\components\Service;
 
 
@@ -79,7 +82,11 @@ class BaseService extends Service
         return false;
     }
 
-
+    /**
+     * 获取时间区间
+     * @param array $TimeRange
+     * @return array
+     */
     public function getRange($TimeRange=[] )
     {
         $data = [];
@@ -174,5 +181,23 @@ class BaseService extends Service
                 break;
         }
         return $data;
+    }
+
+
+    public function updateActionLog($staff_id, $types, $action_id, $oldData = [], $newData = [], $content = '')
+    {
+        if (is_array($oldData) && is_array($newData) && $staff_id) {
+            $differentData = array_diff_assoc($newData, $oldData); //获取差异值
+            $fieldModel = new Field();
+            $field_arr = $fieldModel->getField(['types' => $types,'unFormType' => ['file','form']]); //获取字段属性
+        }elseif ($content){
+            $a = new ActionRecord();
+            $a-> staff_id = $staff_id;
+            $a-> types = $types;
+            $a-> action_id = $action_id;
+            $a-> content = $content;
+            $a->save();
+        }
+
     }
 }

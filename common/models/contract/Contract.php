@@ -5,6 +5,7 @@ namespace addons\Crm\common\models\contract;
 use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
+use addons\Crm\common\models\base\WorkNotice;
 use addons\Crm\common\models\customer\Customer;
 use addons\Store\common\models\product\Sku;
 use common\behaviors\MerchantBehavior;
@@ -91,6 +92,7 @@ class Contract extends \common\models\base\BaseModel
         try {
             $data['Contract']['sign_time'] = strtotime($data['Contract']['sign_time']);
             $data['Contract']['title'] = $data['Contract']['act_time'].'-'.SlotEnum::getValue($data['Contract']['slot']).'-'.$data['Contract']['act_place'].'-'.NatureEnum::getValue($data['Contract']['nature_id']);
+            $this->store_id = $data['Contract']['store_id'] ? $data['Contract']['store_id'] : Yii::$app->user->identity->store_id;
             if( !$this->load($data) || !$this->save() ){
                 throw new \Exception($this->getErrors());
             }
@@ -127,6 +129,23 @@ class Contract extends \common\models\base\BaseModel
                 throw new \Exception('合同添加票据失败！');
             }
 
+            $notice = WorkNotice::findOne(['merchant_id'=>$this->merchant_id,'store_id'=>$this->store_id]);
+            if ( $notice && $notice['open_notice']== 1 && !empty($notice['contract_key']) ){
+                $arr = [
+                    'key' => $notice['contract_key'],
+                    'content' => ' **新增:合同订单 <font color="info">1 个</font>,详情如下：**
+                                 > 时间：'.$this->act_time.'-'.SlotEnum::getValue($this->slot).'                 
+                                 > 地点：'.$this->act_place.'
+                                 > 性质：'.NatureEnum::getValue($this->nature_id).'
+                                 > 合同金额：￥'.$this->contract_price.'元
+                                 > 负责人：'.$this->owner['realname'].'
+                                 > 创建人：'.$this->creator['realname'].'
+                                 > 创建时间: '.date('Y-m-d H:i',$this->created_at).'
+                                 > 测试信息，不用理会
+                                 '
+                ];
+                Yii::$app->workService->message->markdown($arr,'customer');
+            }
             $tran->commit();            //只有执行了commit(),对于上面数据库的操作才会真正执行
         }catch ( \Exception $e) {
             $tran->rollBack();

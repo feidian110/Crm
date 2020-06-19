@@ -20,6 +20,19 @@ class CustomerStatusEnum extends BaseEnum
     public static function getMap(): array
     {
         return [
+            self::ENABLED => '跟进中',
+            self::COMPLETE => '已完成',
+            self::SIGN => '已签订',
+            self::EXECUTE => '执行中',
+            self::DISABLED => '待处理',
+            self::DELETE => '不再跟进',
+
+        ];
+    }
+
+    public static function getLabel(): array
+    {
+        return [
             self::ENABLED => '<span class="label bg-purple-gradient">跟进中</span>',
             self::COMPLETE => '<span class="label bg-gray">已完成</span>',
             self::SIGN => '<span class="label bg-light-blue">已签订</span>',

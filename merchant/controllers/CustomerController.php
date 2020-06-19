@@ -31,6 +31,7 @@ class CustomerController extends BaseController
             'scenario' => 'default',
             'partialMatchAttributes' => ['title', 'act_time'], // 模糊查询
             'defaultOrder' => [
+                'act_time' => SORT_DESC,
                 'id' => SORT_DESC
             ],
             'pageSize' => $this->pageSize
@@ -44,9 +45,10 @@ class CustomerController extends BaseController
         $dataProvider = $searchModel
             ->search(Yii::$app->request->queryParams);
         $dataProvider->query
-            ->where($time)
+            ->andFilterWhere($time)
             ->andWhere($title ? ['like','title',$data['title']] : [] )
-            ->andFilterWhere(['merchant_id' => $this->getMerchantId()]);
+            ->andFilterWhere(['merchant_id' => $this->getMerchantId()])
+            ->andFilterWhere( $this->getStoreId() ? ['store_id' => $this->getStoreId()] : []);
 
         return $this->render($this->action->id, [
             'dataProvider' => $dataProvider,
@@ -67,26 +69,15 @@ class CustomerController extends BaseController
             $this->activeFormValidate($model);
             $post = Yii::$app->request->post();
             if( $model->create($post) ){
-                $arr = [
-                    'key' => '66a4d093-94c2-4807-9c5c-13d11820632e',
-                    'content' => ' **新增:客户信息 <font color="info">1 条</font>,详情如下：**
-                                 > 时间：'.$model['act_time'].'-'.SlotEnum::getValue($model['slot']).'                 
-                                 > 地点：'.$model['act_place'].'
-                                 > 性质：'.NatureEnum::getValue($model['nature_id']).'
-                                 > 负责人：'.$model['owner']['realname'].'
-                                 > 创建人：'.$model['create']['realname'].'
-                                 > 创建时间: '.date('Y-m-d H:i',$model['created_at']).'
-                                 > 测试信息，不用理睬
-                                 '
-                ];
-                Yii::$app->workService->message->markdown($arr,'customer');
+                Yii::$app->crmService->base->updateActionLog(Yii::$app->user->id,CrmTypeEnum::CUSTOMER,$model->id,'','','创建了客户');
                 return $this->message('客户信息添加成功！', $this->redirect(['index']), 'success');
             }
-            $this->message($this->getError($contact), $this->redirect(['index']), 'error');
+            return $this->message($this->getError($contact), $this->redirect(['index']), 'error');
         }
         return $this->renderAjax( $this->action->id,[
             'model' =>$model,
             'sn' => Yii::$app->crmService->base->createSn($this->modelClass,CrmTypeEnum::CUSTOMER),
+            'store' => Yii::$app->storeService->store->getDropDown(),
             'contact' => $contact
         ] );
     }
@@ -96,9 +87,29 @@ class CustomerController extends BaseController
         $id = Yii::$app->request->get('id');
         $model = $this->findModel($id);
         return $this->render( $this->action->id,[
-            'model' =>$model
+            'model' =>$model,
+            'contact' => Yii::$app->crmService->contact->getContactByCustomerId($id),
+            'contract' => Yii::$app->crmService->contract->getContractByCustomerId($id),
+            'receipt' => Yii::$app->financeService->getMerchantId(),
+            'action' => Yii::$app->crmService->actionRecord->getRecordAllData(CrmTypeEnum::CUSTOMER,$id)
         ] );
     }
+
+
+    /**
+     * 转移客户
+     * @return string
+     */
+    public function actionChange()
+    {
+        $id = Yii::$app->request->get('id');
+        $model = $this->findModel($id);
+        return $this->renderAjax($this->action->id,[
+            'model' =>$model,
+            'staff' => Yii::$app->storeService->staff->getDropDown($model['store_id'])
+        ]);
+    }
+
     /**
      * 获取客户主要联系人信息
      * @param $id

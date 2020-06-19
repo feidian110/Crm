@@ -52,11 +52,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     </tr>
                     <tr>
                         <th class="text-right" style="background: #F5F5F5;">负责人：</th>
-                        <th width="200"><?= $model['clerk']['realname'] ?? null;?></th>
+                        <th width="200"><?= $model['owner']['realname'] ?? null;?></th>
                         <th class="text-right" style="background: #F5F5F5;" >联系电话：</th>
-                        <th width="200"><?= $model['clerk']['mobile'] ?? null;?></th>
+                        <th width="200"><?= $model['owner']['mobile'] ?? null;?></th>
                         <th class="text-right" style="background: #F5F5F5;">电子邮箱：</th>
-                        <th width="200"><?= $model['clerk']['email'] ?? null;?></th>
+                        <th width="200"><?= $model['owner']['email'] ?? null;?></th>
                         <th class="text-right" style="background: #F5F5F5;"></th>
                         <th width="200"></th>
                     </tr>
@@ -122,7 +122,101 @@ $this->params['breadcrumbs'][] = $this->title;
                         <li><a href="#tab_8" data-toggle="tab">操作记录</a></li>
                     </ul>
                     <div class="tab-content">
+                        <div class="tab-pane" id="tab_1">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_2">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_3">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_4">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_5">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_6">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_7">
+                            The European languages are members of the same family. Their separate existence is a myth.
+                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
+                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
+                            new common language would be desirable: one could refuse to pay expensive translators. To
+                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
+                            words. If several languages coalesce, the grammar of the resulting language is more simple
+                            and regular than that of the individual languages.
+                        </div>
+                        <div class="tab-pane" id="tab_8">
+                            <ul class="timeline">
+                               <?php foreach ( $action as $action ):?>
+                                <li>
+                                    <i class="fa fa-fw fa-dot-circle-o bg-blue"></i>
 
+                                    <div class="timeline-item">
+
+                                        <h3 class="timeline-header"><a href="#"><?= Yii::$app->formatter->asDate($action['created_at'])?> </a> <?php $time=date("w",$action['created_at']);
+                                            $array = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+                                            $time=date("w",time( ));
+                                            echo $array[$time];?></h3>
+
+                                        <div class="timeline-body">
+                                            <div class="row">
+                                                <div class="col-xs-1">
+                                                    <i class="fa fa-clock-o"></i> <?=date('H:i',$action['created_at']);?>
+                                                </div>
+                                                <div class="col-xs-1">
+                                                    <?= $action['staff']['realname'];?>
+                                                </div>
+                                                <div class="col-xs-5">
+                                                    <?= $action['content'];?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <?php endforeach;?>
+
+                            </ul>
+                        </div>
                     </div>
                     <!-- /.tab-content -->
                 </div>
