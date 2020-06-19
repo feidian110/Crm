@@ -95,6 +95,7 @@ class Customer extends \common\models\base\BaseModel
         if( !$this->load($data) || !$this->save() ){
             throw new \Exception('客户信息有误，存储失败！');
         }
+        var_dump($this->getErrors());
         die;
         try {
             $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
