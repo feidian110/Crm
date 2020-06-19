@@ -89,7 +89,7 @@ class Customer extends \common\models\base\BaseModel
 
     public function create($data)
     {
-        $tran = Yii::$app->db->beginTransaction();
+
         $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
         $this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
         if( !$this->load($data) || !$this->save() ){
@@ -97,6 +97,7 @@ class Customer extends \common\models\base\BaseModel
         }
         var_dump($this->getErrors());
         die;
+        $tran = Yii::$app->db->beginTransaction();
         try {
             $this->title = $data['Customer']['act_time'].'-'.SlotEnum::getValue($data['Customer']['slot']).'-'.$data['Customer']['act_place'].'-'.NatureEnum::getValue($data['Customer']['nature_id']);
             //$this->store_id = $data['Customer']['store_id'] ? $data['Customer']['store_id'] : Yii::$app->user->identity->store_id;
