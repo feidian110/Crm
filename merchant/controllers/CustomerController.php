@@ -69,7 +69,7 @@ class CustomerController extends BaseController
             $this->activeFormValidate($model);
             $post = Yii::$app->request->post();
             if( $model->create($post) ){
-                Yii::$app->crmService->base->updateActionLog($model->store_id,Yii::$app->user->id,CrmTypeEnum::CUSTOMER,$model->id,'','','创建了客户');
+
                 return $this->message('客户信息添加成功！', $this->redirect(['index']), 'success');
             }
             return $this->message($this->getError($contact), $this->redirect(['index']), 'error');
