@@ -125,7 +125,19 @@ HTML;
                             'attribute' => 'status',
                             'format' => 'raw',
                             'value' => function ( $model ){
-                                return CustomerStatusEnum::getValue($model->status);
+                                if( $model->status == CustomerStatusEnum::DISABLED ){
+                                    return '<span class="label bg-yellow-gradient">待处理</span>';
+                                }elseif ( $model->status == CustomerStatusEnum::ENABLED ){
+                                    return '<span class="label bg-purple-gradient">跟进中</span>';
+                                }elseif ( $model->status == CustomerStatusEnum::SIGN ){
+                                    return '<span class="label bg-light-blue">已签订</span>';
+                                }elseif ( $model->status == CustomerStatusEnum::EXECUTE ){
+                                    return '<span class="label bg-green">执行中</span>';
+                                }elseif ( $model->status == CustomerStatusEnum::COMPLETE ){
+                                    return '<span class="label bg-gray">已完成</span>';
+                                }elseif ( $model->status == CustomerStatusEnum::DELETE ){
+                                    return '<span class="label bg-red">不再跟进</span>';
+                                }
                             },
                             'filter' => Html::activeDropDownList($searchModel, 'status', CustomerStatusEnum::getMap(), [
                                     'prompt' => '全部',
