@@ -34,16 +34,6 @@ class ContractController extends BaseController
             ],
             'pageSize' => $this->pageSize
         ]);
-        $role = Yii::$app->services->rbacAuthRole->getRole();
-        if( $role['app_id'] == AppEnum::MERCHANT && $role['pid'] == 0 ){
-            $where = [
-                'merchant_id' => $this->getMerchantId(),
-            ];
-        }else{
-            $where = [
-                'merchant_id' => $this->getMerchantId(),
-            ];
-        }
         $data = Yii::$app->request->get();
         $start_time = isset($data['start_time']) ? $data['start_time'] : date('Y-m-01');
         $end_time = isset($data['end_time']) ? $data['end_time'] : date( 'Y-12-31' );
@@ -55,7 +45,8 @@ class ContractController extends BaseController
             ->where($time)
             ->andWhere($title ? ['like','title',$data['title']] : [])
             ->andWhere(['>=','status',CustomerStatusEnum::DISABLED])
-            ->andFilterWhere($where);
+            ->andFilterWhere(['merchant_id' => $this->getMerchantId()])
+            ->andFilterWhere($this->getStoreId() ? [ 'store_id' =>$this->getStoreId() ] : []);
 
         return $this->render($this->action->id, [
             'dataProvider' => $dataProvider,
