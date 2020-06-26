@@ -126,7 +126,7 @@ class Contract extends \common\models\base\BaseModel
                 throw new \Exception('客户状态更新失败！');
             }
             if( !Yii::$app->financeService->invoice->createReceivables($this) ){
-                throw new \Exception('合同添加票据失败！');
+                throw new \Exception('合同添加失败！');
             }
 
             $notice = WorkNotice::findOne(['merchant_id'=>$this->merchant_id,'store_id'=>$this->store_id]);
@@ -149,8 +149,9 @@ class Contract extends \common\models\base\BaseModel
             $tran->commit();            //只有执行了commit(),对于上面数据库的操作才会真正执行
         }catch ( \Exception $e) {
             $tran->rollBack();
-            return $e->getMessage();
+            return false;
         }
+        return true;
     }
 
     /**
