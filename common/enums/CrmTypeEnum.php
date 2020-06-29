@@ -14,7 +14,7 @@ class CrmTypeEnum extends BaseEnum
     const RECEIPT = 6;
     const PAY = 7;
     const WORKS = 8;
-
+    const EXECUTE = 9;
 
 
     /**
@@ -31,7 +31,8 @@ class CrmTypeEnum extends BaseEnum
             self::FOLLOW => '跟进',
             self::RECEIPT => '收款',
             self::PAY => '付款',
-            self::WORKS => '工单'
+            self::WORKS => '工单',
+            self::EXECUTE => '执行',
         ];
     }
 }

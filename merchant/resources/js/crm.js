@@ -116,3 +116,34 @@ $("#works-customer_id").change(function () {
     })
 });
 
+/**
+ * 订单选择商品
+ *
+ */
+
+function select(){
+    var url = "select_products";
+    layer.open({
+        type: 2,
+        title: '选择商品',
+        shadeClose: true,
+        shade: 0.8,
+        area: ['60%', '60%'],
+        content: url,
+    });
+}
+// 选择商品返回
+function call(table_html){
+    $('#goods_list_div').show();
+
+    $('#goods_td').find('.table-bordered').append(table_html);
+    //过滤选择重复商品
+    $('input[name*="spec"]').each(function(i,o){
+        if($(o).val()){
+            var name='goods_id['+$(o).attr('rel')+']['+$(o).val()+'][goods_num]';
+            $('input[name="'+name+'"]').parent().parent().parent().remove();
+        }
+    });
+    layer.closeAll('iframe');
+}
+

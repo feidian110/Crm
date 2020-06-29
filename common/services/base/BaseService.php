@@ -32,7 +32,7 @@ class BaseService extends Service
             ->orderBy(['created_at'=>SORT_DESC] )
             ->one();
         if( $data == null ){
-            $sn = $prefix.$date.$this->getMerchantId().'00001';
+            $sn = $prefix.$date.$this->getMerchantId().'1001';
         }else{
             $position = strpos($data['sn'],$prefix);
             $str = strlen($prefix);
@@ -64,20 +64,22 @@ class BaseService extends Service
                 return "LXR_";
                 break;
             case CrmTypeEnum::CONTRACT:
-                return "HT_";
+                return "XSHT_";
                 break;
             case CrmTypeEnum::FOLLOW:
                 return "GJ_";
                 break;
             case CrmTypeEnum::RECEIPT:
-                return "SK_";
+                return "SKD_";
                 break;
             case CrmTypeEnum::PAY:
-                return "FK_";
+                return "FKD_";
                 break;
             case CrmTypeEnum::WORKS:
-                return "GD_";
+                return "XSPG_";
                 break;
+            case CrmTypeEnum::EXECUTE:
+                return "ZXGD_";
         }
         return false;
     }
