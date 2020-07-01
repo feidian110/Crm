@@ -7,6 +7,7 @@ namespace addons\Crm\merchant\controllers;
 use addons\Crm\common\enums\CrmTypeEnum;
 use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\models\contract\Contract;
+use addons\Finance\common\enums\AuditStatusEnum;
 use addons\Store\common\models\product\Sku;
 use common\enums\AppEnum;
 use common\enums\StatusEnum;
@@ -92,6 +93,18 @@ class ContractController extends BaseController
         return $this->render( $this->action->id,[
             'model' =>$model
         ] );
+    }
+
+    public function actionAudit()
+    {
+        $id = Yii::$app->request->get('id');
+        $status = Yii::$app->request->get('status');
+        $model = $this->findModel($id);
+        $result = $model::updateAll(['audit_status' =>$status,'audit_time' => $status== AuditStatusEnum::ENABLED ? time() : null,'audit_person' => Yii::$app->user->getId() ],['id' =>$id]);
+        if( $result ){
+            return $this->message('状态更新成功！', $this->redirect(['view','id'=>$id]), 'success');
+        }
+        return $this->message("状态更新失败！", $this->redirect(['view','id'=>$id]), 'error');
     }
 
 

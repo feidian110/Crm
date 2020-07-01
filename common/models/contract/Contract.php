@@ -162,6 +162,12 @@ class Contract extends \common\models\base\BaseModel
     {
         return $this->hasOne( Member::class,['id' => 'creator_id'] );
     }
+
+    public function getProfile()
+    {
+        return $this->hasMany( ContractProduct::class,['order_id' => 'id'] );
+    }
+
     /**
      * 负责人关联方法
      * @return \yii\db\ActiveQuery

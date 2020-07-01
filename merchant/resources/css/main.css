@@ -29,3 +29,15 @@ ul,ol,li,dl,dt,dd,p,h1,h2,h3,h4,h5,h6,form,fieldset{margin:0;padding:0}
 .ncap-order-details .total-amount h3 strong{font-size:20px;color:#ff3300}
 .ncap-order-details .total-amount h4{color:#999;font-size:12px;font-weight:normal;line-height:20px}
 .ncap-order-details .total-amount h5{}
+
+.has-audit{
+    background-image: url("../img/audit.png") ;
+    background-repeat: no-repeat;
+    width: 150px;
+    height: 74px;
+    position: absolute;
+    right: 100px;
+    bottom: 400px;
+    top: 50px;
+    z-index: 1;
+}

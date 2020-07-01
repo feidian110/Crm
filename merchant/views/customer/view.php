@@ -3,6 +3,7 @@
 use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
+use addons\Finance\common\enums\AuditStatusEnum;
 use common\helpers\Html;
 
 $this->title = "客户查看";
@@ -18,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <hr>
             <div class="box-body">
+
                 <table class="table table-bordered">
                     <thead>
                     <tr>
