@@ -52,13 +52,20 @@ $role = Yii::$app->services->rbacAuthRole->getRole();
                 ]);?>
                 <?php if( $role['pid'] == 0 && in_array(Yii::$app->id, [AppEnum::MERCHANT, AppEnum::BACKEND]) ){ echo $form->field($model, 'store_id')->dropDownList($store,['prompt'=>'请选择...']); } ;?>
 
-                <?= $form->field($model, 'supplier_id')->dropDownList([],['prompt'=>'请选择...']);?>
+
                 <?= $form->field($model, 'customer_id')->dropDownList([],['prompt'=>'请选择...']);?>
                 <?= $form->field($model, 'order_id')->dropDownList([],['prompt'=>'请选择...']);?>
 
+
+
+                <?= $form->field($model, 'supplier_id')->dropDownList([],['prompt'=>'请选择...']);?>
+                <?= $form->field($model, 'contact')->textInput();?>
+                <?= $form->field($model, 'contact_mobile')->textInput();?>
                 <?= $form->field($model, 'price')->textInput();?>
-
-
+                <div class="form-group col-sm-4">
+                    <label class="col-sm-4 control-label">制单人</label>
+                    <div class="col-sm-8"><label class="control-label"><?=Yii::$app->user->identity->realname;?></label></div>
+                </div>
                 <div class="form-group col-sm-12">
                     <div class="form-group">
                         <div class="col-sm-1 text-right">

@@ -1,5 +1,7 @@
 <?php
 
+use addons\Crm\common\enums\ContractStatusEnum;
+use addons\Crm\common\enums\WorkStatusEnum;
 use addons\Store\common\enums\AuditStateEnum;
 use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
@@ -29,124 +31,70 @@ HTML;
                     <?= Html::create(['create'], '添加工单') ?>
                 </div>
             </div>
-            <div class="box-body table-responsive">
 
-                <?= GridView::widget([
-                    'dataProvider' => $dataProvider,
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><?=Html::a('订单模式',['index']);?></li>
+                    <li><?=Html::a('工单模式',['list']);?></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" >
+                        <table class="table table-bordered table-hover text-center">
+                            <thead >
+                            <tr style="background: #F0F0F0; height: 50px">
+                                <th style="width: 10px">#</th>
+                                <th>活动时间</th>
+                                <th>地点</th>
+                                <th>性质</th>
+                                <th >新郎</th>
+                                <th >新娘</th>
+                                <th >色调</th>
+                                <th >主题</th>
+                                <th>负责人</th>
+                                <th>派单状态</th>
+                                <th >订单状态</th>
+                                <th >备注</th>
+                                <th >操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                    //重新定义分页样式
-                    'tableOptions' => [
-                        'class' => 'table table-hover rf-table',
-                        'fixedNumber' => 2,
-                        'fixedRightNumber' => 1,
-                    ],
-                    'columns' => [
-                        [
-                            'class' => 'yii\grid\SerialColumn',
-                        ],
-                        [
-                            'attribute' => 'act_time',
-                            'value' => function ( $model ){
-                                return $model->act_time . '-' .SlotEnum::getValue($model->slot);
-                            }
-                        ],
-                        [
-                            'attribute' => 'act_place'
-                        ],
-                        [
-                            'attribute' => 'nature_id',
-                            'value' => function($model){
-                                return NatureEnum::getValue($model->nature_id);
-                            }
-                        ],
-                        [
-                            'attribute' => 'groom_name',
-                        ],
-                        [
-                            'attribute' => 'bride_name'
-                        ],
-                        [
-                            'attribute' => 'contract_price',
-                            'filter' => false,
-                            'value' => function ($model) {
-                                return round($model['contract_price']);
-                            },
-                        ],
-                        [
-                            'attribute' => 'receive_amount',
-                            'filter' => false,
-                            'value' => function ($model) {
-                                return round($model['receive_amount']);
-                            },
-                        ],
-                        [
-                            'attribute' => 'uncollected_amount',
-                            'filter' => false,
-                            'value' => function ($model) {
-                                return round($model['uncollected_amount']);
-                            },
-                        ],
-                        [
-                            'attribute' => 'audit_status',
-                            'value' => function ($model) {
-                                return AuditStateEnum::getValue($model->audit_status);
-                            },
-                            'format' => 'raw',
-                        ],
-                        [
-                            'attribute' => 'status',
-                            'value' => function ($model) {
-                                return CustomerStatusEnum::getValue($model->status);
-                            },
-                            'format' => 'raw',
-                        ],
-                        [
-                            'attribute' => 'remark',
-                            'filter' => false,
-                        ],
-                        [
-                            'header' => '签订人',
-                            'attribute' => 'owner_id',
-                            'value' => function ($model) {
-                                return $model['owner']['realname'] ?? $model['owner']['username'];
-                            },
-                            'filter' => false,
-                        ],
-                        [
-                            'attribute' => 'sign_time',
-                            'filter' => false,
-                            'value' => function ( $model ){
-                                return Yii::$app->formatter->asDatetime($model->sign_time);
-                            },
+                            <?php if( $order ):?>
+                                <?php foreach ($order as $item):?>
+                                    <tr style="height: 50px;">
+                                        <td><?=$item['id'];?></td>
+                                        <td style="width: 150px"><?=$item['act_time'] .'-'. SlotEnum::getValue($item['slot']);?></td>
+                                        <td width="150"><?=$item['act_place'];?></td>
+                                        <td style="width: 60px;"><?= NatureEnum::getValue($item['nature_id']);?></td>
+                                        <td style="width: 100px;"><?= $item['groom_name'];?></td>
+                                        <td style="width: 100px;"><?= $item['bride_name'];?></td>
+                                        <td style="width: 100px;"><?= $item['colour'];?></td>
+                                        <td style="width: 100px;"><?= $item['theme'];?></td>
+                                        <td style="width: 100px;"><?= $item['owner']['realname'];?></td>
+                                        <td style="width: 100px;"><?= WorkStatusEnum::getValue($item['work_status']);?></td>
+                                        <td style="width: 100px;"><?= ContractStatusEnum::getValue($item['status']);?></td>
+                                        <td><?= $item['remark'];?></td>
+                                        <td width="200">
+                                            <?= Html::a('查看',['info','id' =>$item['id']],['class' => 'btn btn-success btn-xs']);?>
+                                            <?= Html::a('派工',['create'],['class' => 'btn btn-primary btn-xs']);?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach;?>
+                            <?php else:?>
+                                <tr>
+                                    <td colspan="11" class="text-center" style="height: 200px">暂无项目信息</td>
+                                </tr>
+                            <?php endif;?>
 
-                        ],
-                        [
-                            'header' => "操作",
-                            'contentOptions' => ['class' => 'text-align-center'],
-                            'class' => 'yii\grid\ActionColumn',
-                            'template' => '{view} {edit} {destroy}',
-                            'buttons' => [
-                                'view' => function ($url ,$model, $key){
-                                    return Html::a('查看 ',['view','id'=>$model->id],[
+                            </tbody></table>
+                    </div>
 
-                                        ]) . '<br>';
-                                } ,
-                                'edit' => function ($url, $model, $key) {
-                                    return Html::a('编辑', ['edit', 'id' => $model->id], [
-                                            'class' => 'green'
-                                        ]). '<br>'  ;
-                                },
+                </div>
 
-                                'destroy' => function ($url, $model, $key) {
-                                    return Html::a('删除', ['destroy', 'id' => $model->id], [
-                                        'class' => 'red',
-                                    ]) ;
-                                },
-                            ],
-                        ],
-                    ],
-                ]); ?>
             </div>
+
+
         </div>
+
     </div>
 </div>

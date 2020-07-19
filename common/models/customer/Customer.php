@@ -167,7 +167,7 @@ class Customer extends \common\models\base\BaseModel
             'title' => '客户名称',
             'act_time' => '活动时间',
             'slot' => '时段',
-            'nature_id' => '活动性质',
+            'nature_id' => '性质',
             'act_place' => '活动地点',
             'address' => 'Address',
             'api_address' => 'Api Address',

@@ -45,7 +45,7 @@ $this->title = "添加工单";
                                 ]
                             ]);?>
                             <?= $form->field($model, 'order_id')->dropDownList([],['prompt'=>'请选择...']);?>
-                            <?= $form->field($model, 'owner_id')->dropDownList([],['value'=>Yii::$app->user->getId()]);?>
+                            <?= $form->field($model, 'owner_id')->dropDownList(Yii::$app->storeService->staff->getDropDown(),['prompt'=>'请选择...','value'=>Yii::$app->user->getId()]);?>
                         </div>
 
                         <div class="col-sm-4">
@@ -54,14 +54,14 @@ $this->title = "添加工单";
                             <div class="form-group">
                                 <label class="col-sm-3 control-label"> 制单人</label>
                                 <div class="col-sm-8">
-                                    <label class="control-label"><?=Yii::$app->user->identity->realname?></label>
+                                    <label class="control-label"><?=Yii::$app->user->identity->realname;?></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label class="col-sm-1 control-label">项目明细</label>
-                                <div class="col-sm-11">
+                                <div class="col-sm-10">
                                     <table class="table table-hover">
                                         <thead>
                                         <tr>
@@ -86,12 +86,27 @@ $this->title = "添加工单";
                                 </div>
                             </div>
 
+
+
                             <?= $form->field($model, 'remark',[
                                 'labelOptions' => ['class'=> 'col-sm-1 control-label'],
                                 'template' => '{label}<div class="col-sm-10">{input}{hint}{error}</div>'
-                            ])->textarea();?>
+                            ])->widget(\common\widgets\ueditor\UEditor::class,[
+                                'config' => [
+                                    'toolbars'=> [
+                                        ['simpleupload','insertvideo','map','bold', 'italic', 'underline', 'fontborder',  'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc']
+                                    ]
+                                ],
+                                'formData' => [
+                                    'thumb' => [ // 图片缩略图
+                                        [
+                                            'width' => 100,
+                                            'height' => 100,
+                                        ],
+                                    ]
+                                ],
 
-
+                            ]) ?>
 
 
                         </div>
@@ -125,13 +140,12 @@ $js = <<<JS
     var url = "/merapi/crm/order/detail";
     data ={storeId:storeId,orderId:orderId}
     $.post(url,data,function (res) {
-        if(res.code ===200 && res.data !== null){
+        if(res.code ===200 && res.data.length !== 0){
             data = res.data;
             product_html = "";
             $(data).each(function (i) {
                 product_html += '<tr>' +
                     '' +
-                    
                     '<td class="text-center"><img src="'+this.product_picture+'" style="height: 30px; width: 30px"></td>' +
                     '<td>'+this.product_name+'</td>' +
                     '<td>'+this.sku_name+'</td>' +
@@ -142,11 +156,10 @@ $js = <<<JS
                     '</tr>';
                 product_html += '<label for="checkbox-moban">&nbsp;</label>';
             });
-            $('#product').html(product_html);
-        }else if(result.status ===0){
+        }else{
             product_html = "<tr><td colspan='8' class='text-center'>暂无项目明细</td></tr>";
-            $('#product').html(product_html);
         }
+        $('#product').html(product_html);
     })
 });
 JS;

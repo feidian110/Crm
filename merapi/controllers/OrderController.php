@@ -6,6 +6,7 @@ namespace addons\Crm\merapi\controllers;
 
 use addons\Crm\common\enums\ContractStatusEnum;
 use addons\Crm\common\enums\ExecuteStatueEnum;
+use addons\Crm\common\enums\WorkStatusEnum;
 use addons\Crm\common\models\contract\Contract;
 use addons\Crm\common\models\contract\ContractProduct;
 use merapi\controllers\OnAuthController;
@@ -35,6 +36,7 @@ class OrderController extends OnAuthController
         $orderId = Yii::$app->request->post('orderId');
         $detail = ContractProduct::find()
             ->where(['store_id'=>$storeId,'order_id'=>$orderId])
+            ->andWhere(['=','delivery_status',WorkStatusEnum::DISABLED])
             ->andWhere(['between','status',ContractStatusEnum::DISABLED,ContractStatusEnum::WORKS])
             ->asArray()
             ->all();

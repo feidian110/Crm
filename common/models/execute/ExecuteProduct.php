@@ -2,6 +2,7 @@
 
 namespace addons\Crm\common\models\execute;
 
+use common\behaviors\MerchantBehavior;
 use Yii;
 
 /**
@@ -31,6 +32,7 @@ use Yii;
  */
 class ExecuteProduct extends \common\models\base\BaseModel
 {
+    use MerchantBehavior;
     /**
      * {@inheritdoc}
      */
@@ -51,6 +53,14 @@ class ExecuteProduct extends \common\models\base\BaseModel
             [['sku_name', 'product_picture'], 'string', 'max' => 200],
             [['remark'], 'string', 'max' => 2000],
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord) {
+            $this->creator_id = Yii::$app->user->getId();
+        }
+        return parent::beforeSave($insert);
     }
 
     /**

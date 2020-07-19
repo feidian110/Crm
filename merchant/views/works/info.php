@@ -1,16 +1,16 @@
 <?php
 
 use addons\Crm\common\enums\ContractStatusEnum;
+use addons\Crm\common\enums\DispatchEnum;
 use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\PayStatusEnum;
 use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\enums\WorkStatusEnum;
-use addons\Finance\common\enums\AuditStatusEnum;
 use common\enums\WhetherEnum;
 use common\helpers\Html;
 use common\helpers\ImageHelper;
 
-$this->title = '合同查看';
+$this->title = '合同工单';
 $this->params['breadcrumbs'][] = ['label' => '客户管理'];
 $this->params['breadcrumbs'][] = ['label' => $this->title];
 ?>
@@ -23,9 +23,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                <?php if( $model['audit_status'] == AuditStatusEnum::ENABLED ):?>
-                <div class="has-audit"></div>
-                <?php endif;?>
+
                 <table class="table table-bordered" style="width: 80%; text-align: center; margin: 0 auto;">
                     <thead>
                     <tr>
@@ -88,19 +86,8 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                         <th width="200"><?=$model['discount_ratio'];?> %</th>
                         <th class="text-right" style="background: #F5F5F5;">优惠比例：</th>
                         <th width="200"><?=$model['discount_ratio'];?> %</th>
-
                     </tr>
-                    <tr>
-                        <th class="text-right" style="background: #F5F5F5;">已收金额：</th>
-                        <th width="200">￥<?= $model['receive_amount'] ;?>元</th>
-                        <th class="text-right" style="background: #F5F5F5;">未收金额：</th>
-                        <th width="200">￥<?= $model['uncollected_amount'];?>元</th>
 
-                        <th class="text-right" style="background: #F5F5F5;">抹零金额：</th>
-                        <th width="200">￥<?= $model['uncollected_amount'];?>元</th>
-                        <th class="text-right" style="background: #F5F5F5;">签订人：</th>
-                        <th width="200"><?=$model['owner']['realname'];?> </th>
-                    </tr>
                     <tr>
                         <td colspan="8">
                             <table class="table table-hover" style="margin-bottom: 0">
@@ -110,36 +97,40 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                                     <th class="text-left">名称</th>
                                     <th class="text-left">规格</th>
                                     <th class="text-center">数量</th>
-                                    <th class="text-center">单价</th>
                                     <th class="text-center">赠送</th>
-                                    <th class="text-center">小计</th>
+                                    <th class="text-center">派单</th>
+                                    <th class="text-center">供应商</th>
+                                    <th class="text-center">关联工单</th>
                                     <th class="text-center">备注</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <?php if( $model['profile'] ):?>
-                                <?php foreach ( $model['profile'] as $item ):?>
-                                <tr>
-                                    <td width="100px"><img src="<?= ImageHelper::default($item['product_picture']);?>" style="width: 45px; height: 45px;"></td>
-                                    <td width="300px" class="text-left"><?= $item['product_name'];?></td>
-                                    <td width="150px" class="text-left"><?= $item['sku_name'];?></td>
-                                    <td width="80px"><?= $item['num'];?></td>
-                                    <td width="100px" class="text-right">￥<?= $item['price'];?></td>
-                                    <td width="100px"><?= WhetherEnum::getValue($item['gift_flag']);?></td>
-                                    <td width="100px" class="text-right">￥<?= $item['gift_flag'] == WhetherEnum::ENABLED ?  $item['product_money'] : 0 ;?></td>
-                                    <td class="text-left"><?= $item['remark'];?></td>
-                                </tr>
+                                    <?php foreach ( $model['profile'] as $item ):?>
+                                        <tr>
+                                            <td width="100px"><?= $item['product_picture'] ? ImageHelper::fancyBox($item['product_picture']) : '<img src="'.ImageHelper::default($item['product_picture']).'" style="width: 45px; height: 45px;">'?></td>
+                                            <td width="200px" class="text-left"><?= $item['product_name'];?></td>
+                                            <td width="100px" class="text-left"><?= $item['sku_name'];?></td>
+                                            <td width="60px"><?= $item['num'];?></td>
+                                            <td width="80px"><?= WhetherEnum::getValue($item['gift_flag']);?></td>
+                                            <td width="80px" class="text-right"><?= DispatchEnum::getValue($item['delivery_status']);?></td>
+                                            <td width="150px"><?= $item['supplier']['title'] ?? ""?></td>
+                                            <td width="150px"><?= $item['jobs_id'] == 0 ? "" : Html::a($item['works']['sn'],['view','id' =>$item['jobs_id']],['class'=>'text-light-blue','data-toggle' => 'modal',
+                                                    'data-target' => '#ajaxModalLg','title' => '点击查看'])?></td>
+                                            <td class="text-left"><?= $item['remark'];?></td>
+                                        </tr>
                                     <?php endforeach; ?>
                                 <?php else:?>
-                                <tr>
-                                    <td colspan="8">暂无项目明细</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="9">暂无项目明细</td>
+                                    </tr>
                                 <?php endif;?>
 
                                 </tbody>
                                 <tfoot>
                                 <tr>
                                     <td colspan="3">合计：</td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
@@ -156,7 +147,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                     <tfoot>
                     <tr>
                         <td style="background: #F5F5F5;">执行操作：</td>
-                        <td colspan="7" class="text-left"><?= Html::a($model['audit_status'] == AuditStatusEnum::ENABLED ? "反审核" : "审核",['audit','id'=>$model['id'],'status'=>$model['audit_status']== AuditStatusEnum::ENABLED ? AuditStatusEnum::DISABLED : AuditStatusEnum::ENABLED],['class'=> 'btn btn-warning btn-xs']);?></td>
+                        <td colspan="7" class="text-left"></td>
                     </tr>
                     <tr>
                         <td style="background: #F5F5F5; height: 100px">合同备注：</td>

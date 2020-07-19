@@ -42,8 +42,6 @@ use Yii;
  * @property int $discount_ratio 优惠比例率
  * @property string $receive_amount 已收金额
  * @property string $uncollected_amount 未收金额
- * @property string $self_amount 自收金额
- * @property string $collect_amount 代收金额
  * @property string $remark 合同备注
  * @property string $creator_id 创建人
  * @property string $owner_id 负责人
@@ -76,7 +74,7 @@ class Contract extends \common\models\base\BaseModel
             [['merchant_id', 'store_id', 'customer_id', 'slot', 'nature_id', 'discount_ratio', 'creator_id', 'owner_id', 'buyer_id', 'sort', 'status', 'audit_status', 'audit_person', 'audit_time', 'created_at', 'updated_at'], 'integer'],
             [['sn','sign_time','act_time','act_place', 'nature_id', 'customer_id', 'slot','groom_name', 'buyer_id', 'contract_price'], 'required'],
             [['act_time'], 'safe'],
-            [['contract_price', 'product_total', 'receive_amount', 'uncollected_amount', 'self_amount', 'collect_amount'], 'number'],
+            [['contract_price', 'product_total', 'receive_amount', 'uncollected_amount'], 'number'],
             [['sn'], 'string', 'max' => 64],
             [['title'], 'string', 'max' => 200],
             [['act_place', 'colour', 'theme', 'groom_address', 'bride_address', 'company_name'], 'string', 'max' => 100],
@@ -101,9 +99,10 @@ class Contract extends \common\models\base\BaseModel
                 $tmp = [
                     'customer_id' => $data['Contract']['customer_id'],
                     'order_id' => $this->id,
+                    'store_id' => $this->store_id,
                     'product_id' =>$sku['product_id'],
                     'product_name' => $sku['product']['name'],
-                    'product_pictue' => $sku['picture'],
+                    'product_picture' => $sku['picture'],
                     'num' => $v['goods_num'],
                     'sku_id' => $sku['id'],
                     'sku_name' =>$sku['name'],
@@ -165,7 +164,7 @@ class Contract extends \common\models\base\BaseModel
 
     public function getProfile()
     {
-        return $this->hasMany( ContractProduct::class,['order_id' => 'id'] );
+        return $this->hasMany( ContractProduct::class,['order_id' => 'id'] )->orderBy('supplier_id');
     }
 
     /**
@@ -219,8 +218,6 @@ class Contract extends \common\models\base\BaseModel
             'discount_ratio' => 'Discount Ratio',
             'receive_amount' => '已收金额',
             'uncollected_amount' => '未收金额',
-            'self_amount' => '自收金额',
-            'collect_amount' => '代收金额',
             'remark' => '合同备注',
             'creator_id' => '创建人',
             'owner_id' => '负责人',

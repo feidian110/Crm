@@ -28,59 +28,57 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
 
                 <?= GridView::widget([
                     'dataProvider' => $dataProvider,
-
+                    'filterModel' => $searchModel,
                     //重新定义分页样式
                     'tableOptions' => [
-                        'class' => 'table table-hover rf-table',
+                        'class' => 'table table-hover',
                         'fixedNumber' => 2,
                         'fixedRightNumber' => 1,
                     ],
+                    'headerRowOptions' => ['style'=>'background: #F0F0F0; height: 50px'],
                     'columns' => [
                         [
                             'class' => 'yii\grid\SerialColumn',
                         ],
                         [
-                            'attribute' => 'act_time',
+                            'attribute' => 'contract.act_time',
                             'value' => function ( $model ){
-                                return $model->act_time . '-' .SlotEnum::getValue($model->slot);
+                                return $model['contract']['act_time'] . '-' .SlotEnum::getValue($model['contract']['slot']);
                             }
                         ],
                         [
-                            'attribute' => 'act_place'
+                            'attribute' => 'contract.act_place'
                         ],
                         [
-                            'attribute' => 'nature_id',
+                            'attribute' => 'contract.nature_id',
                             'value' => function($model){
-                                return NatureEnum::getValue($model->nature_id);
+                                return NatureEnum::getValue($model['contract']['nature_id']);
                             }
                         ],
                         [
-                            'attribute' => 'groom_name',
+                            'attribute' => 'contract.groom_name',
                         ],
                         [
-                            'attribute' => 'bride_name'
+                            'attribute' => 'contract.bride_name'
                         ],
                         [
-                            'attribute' => 'contract_price',
+                            'attribute' => 'supplier.title',
+                            'filter' => false,
+                        ],
+                        [
+                            'attribute' => 'contact'
+                        ],
+                        [
+                            'attribute' => 'contact_mobile'
+                        ],
+                        [
+                            'attribute' => 'price',
                             'filter' => false,
                             'value' => function ($model) {
-                                return round($model['contract_price']);
+                                return "￥".$model['price'];
                             },
                         ],
-                        [
-                            'attribute' => 'receive_amount',
-                            'filter' => false,
-                            'value' => function ($model) {
-                                return round($model['receive_amount']);
-                            },
-                        ],
-                        [
-                            'attribute' => 'uncollected_amount',
-                            'filter' => false,
-                            'value' => function ($model) {
-                                return round($model['uncollected_amount']);
-                            },
-                        ],
+
                         [
                             'attribute' => 'audit_status',
                             'value' => function ($model) {
@@ -103,18 +101,11 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                             'header' => '签订人',
                             'attribute' => 'owner_id',
                             'value' => function ($model) {
-                                return $model['owner']['realname'] ?? $model['owner']['username'];
+                                return $model['owner']['realname'] ?? "";
                             },
                             'filter' => false,
                         ],
-                        [
-                            'attribute' => 'sign_time',
-                            'filter' => false,
-                            'value' => function ( $model ){
-                                return Yii::$app->formatter->asDatetime($model->sign_time);
-                            },
 
-                        ],
                         [
                             'header' => "操作",
                             'contentOptions' => ['class' => 'text-align-center'],

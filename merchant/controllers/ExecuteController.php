@@ -21,6 +21,9 @@ class ExecuteController extends BaseController
 
     public function actionIndex()
     {
+        $title = Yii::$app->request->get('title');
+        $start_time = Yii::$app->request->get('start_time', date('Y-m-d', strtotime("-60 day")));
+        $end_time = Yii::$app->request->get('end_time', date('Y-m-d', strtotime("+1 day")));
         $searchModel = new SearchModel([
             'model' => $this->modelClass,
             'scenario' => 'default',
@@ -31,6 +34,14 @@ class ExecuteController extends BaseController
             ],
             'pageSize' => $this->pageSize
         ]);
+        //$data = Curd::find()
+        //    ->andWhere(['merchant_id' => $this->getMerchantId()])
+        //    ->andFilterWhere(['like', 'title', $title])
+        //    ->andFilterWhere(['between', 'created_at', strtotime($start_time), strtotime($end_time)]);
+       // $pages = new Pagination(['totalCount' => $data->count(), 'pageSize' => $this->pageSize]);
+       // $models = $data->offset($pages->offset)
+        //    ->limit($pages->limit)
+       //     ->all();
         $dataProvider = $searchModel
             ->search(Yii::$app->request->queryParams);
 
@@ -50,7 +61,11 @@ class ExecuteController extends BaseController
         if( Yii::$app->request->isPost ){
             // ajax 校验
             $this->activeFormValidate($model);
-            var_dump(Yii::$app->request->post());die;
+            $post = Yii::$app->request->post();
+            if( $model->create($post) ){
+                return $this->message('执行单添加成功！', $this->redirect(['index']), 'success');
+            }
+            return $this->message("执行单添加失败！", $this->redirect(['index']), 'error');
         }
 
         return $this->render( $this->action->id,[

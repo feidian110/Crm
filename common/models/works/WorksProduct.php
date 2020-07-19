@@ -9,6 +9,7 @@ use Yii;
  * This is the model class for table "{{%addon_crm_works_product}}".
  *
  * @property string $id 主键
+ * @property string $works_id 工单ID
  * @property string $merchant_id 商家
  * @property string $store_id 门店
  * @property string $customer_id 客户
@@ -25,11 +26,11 @@ use Yii;
  * @property string $remark 备注
  * @property string $creator_id 制单人
  * @property string $owner_id 负责人
- * @property string $aduitor_id 审核人
+ * @property string $auditor_id 审核人
  * @property string $confirm_id 确认人
- * @property int $aduit_status 审核状态[0:待审核,1:已审核]
+ * @property int $audit_status 审核状态[0:待审核,1:已审核]
  * @property int $confirm_status 确认状态[0:待确认,1:已确认]
- * @property int $aduit_time 审核时间
+ * @property int $audit_time 审核时间
  * @property int $confirm_time 确认时间
  * @property int $status 状态
  * @property int $created_at 创建时间
@@ -52,8 +53,7 @@ class WorksProduct extends \common\models\base\BaseModel
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id', 'merchant_id', 'store_id', 'customer_id', 'order_id', 'supplier_id', 'product_id', 'num', 'sku_id', 'creator_id', 'owner_id', 'aduitor_id', 'confirm_id', 'aduit_status', 'confirm_status', 'aduit_time', 'confirm_time', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['works_id', 'merchant_id', 'store_id', 'customer_id', 'order_id', 'supplier_id', 'product_id', 'num', 'sku_id', 'creator_id', 'owner_id', 'auditor_id', 'confirm_id', 'audit_status', 'confirm_status', 'audit_time', 'confirm_time', 'status', 'created_at', 'updated_at'], 'integer'],
             [['price', 'cost_price', 'product_price'], 'number'],
             [['product_name', 'sku_name'], 'string', 'max' => 100],
             [['remark'], 'string', 'max' => 2000],
@@ -64,7 +64,6 @@ class WorksProduct extends \common\models\base\BaseModel
     {
         if ($this->isNewRecord) {
             $this->creator_id = Yii::$app->user->getId();
-            $this->owner_id = $this->order_id ? $this->order_id : Yii::$app->user->getId();
         }
         return parent::beforeSave($insert);
     }
@@ -75,6 +74,7 @@ class WorksProduct extends \common\models\base\BaseModel
     {
         return [
             'id' => 'ID',
+            'works_id' => 'Works ID',
             'merchant_id' => 'Merchant ID',
             'store_id' => 'Store ID',
             'customer_id' => 'Customer ID',
@@ -91,11 +91,11 @@ class WorksProduct extends \common\models\base\BaseModel
             'remark' => 'Remark',
             'creator_id' => 'Creator ID',
             'owner_id' => 'Owner ID',
-            'aduitor_id' => 'Aduitor ID',
+            'auditor_id' => 'Auditor ID',
             'confirm_id' => 'Confirm ID',
-            'aduit_status' => 'Aduit Status',
+            'audit_status' => 'Audit Status',
             'confirm_status' => 'Confirm Status',
-            'aduit_time' => 'Aduit Time',
+            'audit_time' => 'Audit Time',
             'confirm_time' => 'Confirm Time',
             'status' => 'Status',
             'created_at' => 'Created At',

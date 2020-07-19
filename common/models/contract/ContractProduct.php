@@ -2,6 +2,8 @@
 
 namespace addons\Crm\common\models\contract;
 
+use addons\Crm\common\models\works\Works;
+use addons\Finance\common\models\base\Supplier;
 use common\behaviors\MerchantBehavior;
 use Yii;
 
@@ -65,6 +67,16 @@ class ContractProduct extends \common\models\base\BaseModel
             $this->staff_id = Yii::$app->user->getId();
         }
         return parent::beforeSave($insert);
+    }
+
+    public function getSupplier()
+    {
+        return $this->hasOne( Supplier::class,['id' => 'supplier_id'] );
+    }
+
+    public function getWorks()
+    {
+        return $this->hasOne( Works::class,['id' =>'jobs_id'] );
     }
     /**
      * {@inheritdoc}

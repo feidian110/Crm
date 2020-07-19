@@ -4,12 +4,39 @@ namespace addons\Crm\common\services\common;
 
 use addons\Crm\common\models\contract\Contract;
 use addons\Crm\common\models\contract\ContractProduct;
+use addons\Crm\common\models\forms\ContractQueryForm;
 use addons\Store\common\enums\OrderStatusEnum;
 use common\components\Service;
 use common\enums\StatusEnum;
+use common\helpers\AddonHelper;
+use yii\data\Pagination;
 
 class ContractService extends Service
 {
+
+    public function query(ContractQueryForm $queryForm)
+    {
+        $data = Contract::find()
+            ->alias('o')
+            ->where(['>=', 'o.status', StatusEnum::DISABLED])
+            ->andFilterWhere(['o.merchant_id' => $this->getMerchantId()]);
+        $pages = new Pagination([
+            'totalCount' => $data->count(),
+            'pageSize' => $this->pageSize,
+            'validatePage' => false,
+        ]);
+        $models = $data->offset($pages->offset)
+            ->orderBy('id desc')->with('owner')
+            ->asArray()
+            ->limit($pages->limit)
+            ->all();
+
+        return $models;
+
+    }
+
+
+
     /**
      * 变更订单的商品合计金额
      * @param $orderId

@@ -2,11 +2,17 @@
 
 namespace addons\Crm\common\models\works;
 
+use addons\Crm\common\enums\CrmTypeEnum;
+use addons\Crm\common\enums\DispatchEnum;
+use addons\Crm\common\enums\WorkStatusEnum;
 use addons\Crm\common\models\contract\Contract;
 use addons\Crm\common\models\contract\ContractProduct;
 use addons\Crm\common\models\customer\Customer;
+use addons\Finance\common\enums\AuditStatusEnum;
 use addons\Finance\common\models\base\Supplier;
+
 use common\behaviors\MerchantBehavior;
+use common\models\merchant\Member;
 use Yii;
 
 /**
@@ -51,7 +57,7 @@ class Works extends \common\models\base\BaseModel
     public function rules()
     {
         return [
-            [['works_price'], 'required'],
+            [['works_price','supplier_id','owner_id'], 'required'],
             [['merchant_id', 'store_id', 'customer_id', 'order_id', 'supplier_id', 'creator_id', 'auditor_id', 'owner_id', 'audit_status', 'receive_id', 'confirm_status', 'confirm_time', 'audit_time', 'sort', 'status', 'created_at', 'updated_at'], 'integer'],
             [['works_price', 'product_price'], 'number'],
             [['sn'], 'string','max'=>64],
@@ -61,35 +67,18 @@ class Works extends \common\models\base\BaseModel
 
     public function create($data)
     {
+        $this-> work_date = strtotime($data['Works']['work_date']);
+        $this-> sn = Yii::$app->crmService->base->createSn(Works::class,CrmTypeEnum::WORKS);
         if( !$this->load($data) || !$this->save() ){
+            return false;
         }
 
         foreach ( $data['product'] as $k =>$v ){
-            $product = ContractProduct::findOne($v);
-
-            $detail = new WorksProduct();
-            $str = [
-                'works_id' =>$this->id,
-                'customer_id' =>$this->customer_id,
-                'order_id' => $this->order_id,
-                'product_id' => $product['product_id'],
-                'store_id' =>$this->store_id,
-                'supplier_id' =>$this->supplier_id,
-                'product_name' => $product['product_name'],
-                'num' => $product['num'],
-                'sku_id' =>$product['sku_id'],
-                'sku_name' => $product['sku_name'],
-                'price' => $product['price'],
-                'cost_price' =>$product['cost_price'],
-                'product_price' => $product['product_money'],
-                'remark' => $product['remark'],
-            ];
-
-            if(!$detail->load($str) || !$detail->save()){
-                return $this->addErrors($detail->getErrors());
-            }
+            ContractProduct::updateAll(['supplier_id' =>$this->supplier_id,'jobs_id' =>$this->id,'delivery_status'=>AuditStatusEnum::ENABLED],['id' =>$v]);
         }
-
+        $have = ContractProduct::findOne(['order_id' => $data['Works']['order_id'],'delivery_status' => DispatchEnum::DISABLED]);
+        Contract::updateAll(['work_status' => $have ? WorkStatusEnum::ENABLED : WorkStatusEnum::COMPLETE ],['id' => $data['Works']['order_id']]);
+        return true;
     }
 
     /**
@@ -99,6 +88,21 @@ class Works extends \common\models\base\BaseModel
     public function getCustomer()
     {
         return $this->hasOne( Customer::class,['id' =>'customer_id'] );
+    }
+
+    public function getDetail()
+    {
+        return $this->hasMany( ContractProduct::class,['jobs_id' => 'id'] );
+    }
+
+    public function getCreator()
+    {
+        return $this->hasOne( Member::class,['id' => 'creator_id'] );
+    }
+
+    public function getOwner()
+    {
+        return $this->hasOne( Member::class,['id' => 'owner_id'] );
     }
 
     /**
@@ -123,7 +127,6 @@ class Works extends \common\models\base\BaseModel
     {
         if ($this->isNewRecord) {
             $this->creator_id = Yii::$app->user->getId();
-            $this->owner_id = $this->order_id ? $this->order_id : Yii::$app->user->getId();
         }
         return parent::beforeSave($insert);
     }
@@ -147,15 +150,15 @@ class Works extends \common\models\base\BaseModel
             'creator_id' => 'Creator ID',
             'auditor_id' => 'Auditor ID',
             'owner_id' => '负责人',
-            'audit_status' => 'Audit Status',
+            'audit_status' => '审核状态',
             'receive_id' => 'Receive ID',
-            'confirm_status' => 'Confirm Status',
-            'confirm_time' => 'Confirm Time',
-            'audit_time' => 'Audit Time',
-            'sort' => 'Sort',
-            'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'confirm_status' => '确认状态',
+            'confirm_time' => '确认时间',
+            'audit_time' => '审核时间',
+            'sort' => '排序',
+            'status' => '状态',
+            'created_at' => '创建时间',
+            'updated_at' => '更新时间',
         ];
     }
 }

@@ -147,3 +147,50 @@ function call(table_html){
     layer.closeAll('iframe');
 }
 
+$('#execute-store_id').change(function () {
+    var storeId = $("#execute-store_id").val();
+    var url = "/merapi/crm/customer/list";
+    var suppUrl = "/merapi/crm/supplier/list"
+    data = {id:storeId}
+    $.post(suppUrl,data,function (result) {
+        $("#execute-supplier_id").empty();
+        var str = '<option value="">'+'请选择...'+'</option>';
+        if(result.code ===200 && result.data !== null){
+            suppData = result.data;
+            for( var i=0; i < suppData.length; i++ ){
+                str += '<option value="'+suppData[i].id+'">'+suppData[i].title+'</option>';
+            }
+            $("#execute-supplier_id").append(str);
+        }
+    });
+    $.post(url,data,function (res) {
+        $("#execute-customer_id").empty();
+        $("#execute-order_id").empty();
+        var str = '<option value="">'+'请选择...'+'</option>';
+        if(res.code ===200 && res.data !== null){
+            data = res.data;
+            for( var i=0; i < data.length; i++ ){
+                str += '<option value="'+data[i].id+'">'+data[i].title+'</option>';
+            }
+            $("#execute-customer_id").append(str);
+            $("#execute-order_id").append(str)
+        }
+    });
+})
+$("#execute-customer_id").change(function () {
+    var customerId = $("#execute-customer_id").val();
+
+    var url = "/merapi/crm/order/list";
+    data = {id:customerId}
+    $.post(url,data,function (res) {
+        $("#execute-order_id").empty();
+        var str = '<option value="">'+'请选择...'+'</option>';
+        if(res.code ===200 && res.data !== null){
+            data = res.data;
+            for( var i=0; i < data.length; i++ ){
+                str += '<option value="'+data[i].id+'">'+data[i].title+'</option>';
+            }
+            $("#execute-order_id").append(str);
+        }
+    })
+})

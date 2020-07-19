@@ -15,9 +15,9 @@ class WorkStatusEnum extends BaseEnum
     public static function getMap(): array
     {
         return [
-            self::DISABLED => '<span class="label bg-purple-gradient">待执行</span>',
-            self::COMPLETE => '<span class="label bg-yellow-gradient">已执行</span>',
-            self::ENABLED => '<span class="label bg-red">执行中</span>',
+            self::DISABLED => '<span class="label bg-purple-gradient">待派单</span>',
+            self::COMPLETE => '<span class="label bg-yellow-gradient">已派单</span>',
+            self::ENABLED => '<span class="label bg-red">部分派单</span>',
         ];
     }
 }
