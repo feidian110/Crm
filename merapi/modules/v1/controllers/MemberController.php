@@ -15,13 +15,18 @@ class MemberController extends OnAuthController
 
     public function actionIndex()
     {
-        $member_id = Yii::$app->user->identity->member_id;
+        $member_id = Yii::$app->user->getId();
 
         $member = $this->modelClass::find()
             ->where(['id' => $member_id])
             ->asArray()
             ->one();
         return $member;
+    }
+
+    public function actionAuthCreate()
+    {
+
     }
 
 }

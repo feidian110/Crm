@@ -4,6 +4,7 @@
 namespace addons\Crm\merapi\modules\v1\controllers;
 
 use addons\Crm\merapi\modules\v1\forms\LoginForm;
+use addons\Crm\merapi\modules\v1\forms\MobileLogin;
 use addons\Crm\merapi\modules\v1\forms\RefreshForm;
 use common\helpers\ResultHelper;
 use merapi\controllers\OnAuthController;
@@ -53,6 +54,57 @@ class SiteController extends OnAuthController
         }
 
         return $this->regroupMember(Yii::$app->services->merapiAccessToken->getAccessToken($model->getUser(), $model->group));
+    }
+
+    /**
+     * 手机验证码登录
+     *
+     * @return array|mixed
+     * @throws \yii\base\Exception
+     */
+    public function actionMobileLogin()
+    {
+        $model = new MobileLogin();
+        $model->attributes = Yii::$app->request->post();
+        if ($model->validate()) {
+            return $this->regroupMember(Yii::$app->services->merapiAccessToken->getAccessToken($model->getUser(), $model->group));
+        }
+
+        // 返回数据验证失败
+        return ResultHelper::json(422, $this->getError($model));
+    }
+
+    /**
+     * 获取验证码
+     *
+     * @return int|mixed
+     * @throws \yii\web\UnprocessableEntityHttpException
+     */
+    public function actionSmsCode()
+    {
+        $model = new SmsCodeForm();
+        $model->attributes = Yii::$app->request->post();
+        if (!$model->validate()) {
+            return ResultHelper::json(422, $this->getError($model));
+        }
+
+        // 测试
+        $code = rand(1000, 9999);
+        $log = new SmsLog();
+        $log = $log->loadDefaultValues();
+        $log->attributes = [
+            'mobile' => $model->mobile,
+            'code' => $code,
+            'member_id' => 0,
+            'usage' => $model->usage,
+            'error_code' => 200,
+            'error_msg' => 'ok',
+            'error_data' => '',
+        ];
+        $log->save();
+
+        return $code;
+        // return $model->send();
     }
 
     /**
