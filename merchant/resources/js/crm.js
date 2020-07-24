@@ -203,14 +203,10 @@ $("#execute-customer_id").change(function () {
  */
 function PreviewWorkInfoTable(){
     var LODOP=getLodop();
-    var title = "{$model['merchant']['title']}"+"【"+"{$model['store']['title']}"+"】"+"婚礼执行单";
-    LODOP.PRINT_INIT(title);
-    LODOP.ADD_PRINT_TEXT(5,210,421,30,title);
-    LODOP.SET_PRINT_STYLEA(0,"FontName","楷体");
-    LODOP.SET_PRINT_STYLEA(0,"FontSize",16);
-    LODOP.SET_PRINT_STYLEA(0,"Horient",2);
+
+    LODOP.PRINT_INIT("婚礼执行单");
     var strStyle="<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>"
-    LODOP.ADD_PRINT_TABLE(43,"2%","96%",314,strStyle+document.getElementById("work-info").innerHTML);
+    LODOP.ADD_PRINT_TABLE(10,"2%","96%",314,strStyle+document.getElementById("work-info").innerHTML);
     LODOP.SET_PRINT_STYLEA(0,"Vorient",3);
     LODOP.PREVIEW();
 };

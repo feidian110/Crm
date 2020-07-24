@@ -8,9 +8,11 @@ use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\models\base\WorkNotice;
 use addons\Crm\common\models\customer\Customer;
 use addons\Store\common\models\product\Sku;
+use addons\Store\common\models\store\Store;
 use common\behaviors\MerchantBehavior;
 use common\enums\StatusEnum;
 use common\models\merchant\Member;
+use common\models\merchant\Merchant;
 use Yii;
 
 /**
@@ -165,6 +167,16 @@ class Contract extends \common\models\base\BaseModel
     public function getProfile()
     {
         return $this->hasMany( ContractProduct::class,['order_id' => 'id'] )->orderBy('supplier_id');
+    }
+
+    public function getMerchant()
+    {
+        return $this->hasOne( Merchant::class,['id'=>'merchant_id'] );
+    }
+
+    public function getStore()
+    {
+        return $this->hasOne( Store::class,['id' => 'store_id'] );
     }
 
     /**
