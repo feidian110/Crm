@@ -71,7 +71,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                                 <table class="table table-hover" style="margin-bottom: 0">
                                     <thead>
                                     <tr style="height: 30px; background: #c2ccd1">
-                                        <th class="text-center">商品图片</th>
                                         <th class="text-left">名称</th>
                                         <th class="text-left">规格</th>
                                         <th class="text-center">数量</th>
@@ -86,7 +85,6 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                                     <?php if( $model['profile'] ):?>
                                         <?php foreach ( $model['profile'] as $item ):?>
                                             <tr>
-                                                <td width="100px"><?= $item['product_picture'] ? ImageHelper::fancyBox($item['product_picture']) : '<img src="'.ImageHelper::default($item['product_picture']).'" style="width: 45px; height: 45px;">'?></td>
                                                 <td width="200px" class="text-left"><?= $item['product_name'];?></td>
                                                 <td width="100px" class="text-left"><?= $item['sku_name'];?></td>
                                                 <td width="60px" style="text-align: center"><?= $item['num'];?></td>
