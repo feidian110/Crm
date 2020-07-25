@@ -14,6 +14,7 @@ use common\components\Service;
  * @property \addons\Crm\common\services\common\CustomerService $customer 客户
  * @property \addons\Crm\common\services\common\ContactService $contact 联系人
  * @property \addons\Crm\common\services\common\ContractService $contract 合同
+ * @property \addons\Crm\common\services\common\SupplierService $supplier 供应商
  */
 
 class Application extends Service
@@ -26,6 +27,7 @@ class Application extends Service
         'leads' => 'addons\Crm\common\services\common\LeadsService',
         'customer' => 'addons\Crm\common\services\common\CustomerService',
         'contact' => 'addons\Crm\common\services\common\ContactService',
-        'contract' => 'addons\Crm\common\services\common\ContractService'
+        'contract' => 'addons\Crm\common\services\common\ContractService',
+        'supplier' => 'addons\Crm\common\services\common\SupplierService'
     ];
 }
