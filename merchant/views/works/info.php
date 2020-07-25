@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                         <table class="table table-bordered" style="width: 100%; text-align: center; margin: 0 auto;font-size: 11px;font-family: 微软雅黑">
                             <thead>
                             <tr>
-                                <th colspan="8" style="text-align: center; font-size: 18px; height: 50px;font-family: 楷体"><?=$model['merchant']['title'] . '【'. $model['store']['title'] . '】'. '婚礼执行单';?><a style="font-size: 12px">（<?=$model['title'];?>）</a></th>
+                                <th colspan="8" style="text-align: center; font-size: 18px; height: 40px;font-family: 楷体"><?=$model['merchant']['title'] . '【'. $model['store']['title'] . '】'. '婚礼执行单';?><a style="font-size: 12px;font-family: 黑体">（<?=$model['title'];?>）</a></th>
                             </tr>
                             <tr style="height: 28px">
                                 <th class="text-right" style="background: #F5F5F5;" width="200">订单ID：</th>
@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                                 <td colspan="8">
                                     <table class="table table-hover" style="margin-bottom: 0">
                                         <thead>
-                                        <tr style="height: 30px; background: #c2ccd1">
+                                        <tr style="height: 30px; background: #e2e3e2">
                                             <th class="text-left">名称</th>
                                             <th class="text-left">规格</th>
                                             <th class="text-center">数量</th>
@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                                         <?php if( $model['profile'] ):?>
                                             <?php foreach ( $model['profile'] as $item ):?>
                                                 <tr>
-                                                    <td width="200px" class="text-left"><?= $item['product_name'];?></td>
+                                                    <td width="300px" class="text-left"><?= $item['product_name'];?></td>
                                                     <td width="200px" class="text-left"><?= $item['sku_name'];?></td>
                                                     <td width="80px" style="text-align: center"><?= $item['num'];?></td>
                                                     <td width="80px" style="text-align: center"><?= WhetherEnum::getValue($item['gift_flag']);?></td>
@@ -121,7 +121,7 @@ $this->params['breadcrumbs'][] = ['label' => $this->title];
                                 </td>
                             </tr>
                             <tr>
-                                <td style="background: #F5F5F5; height: 100px">合同备注：</td>
+                                <td style="background: #F5F5F5; height: 60px">合同备注：</td>
                                 <td colspan="7"></td>
                             </tr>
                             </thead>
