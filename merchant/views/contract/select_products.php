@@ -1,6 +1,9 @@
 <?php
 
+use common\helpers\Html;
 use common\helpers\Url;
+use yii\grid\GridView;
+use yii\widgets\ActiveForm;
 
 ?>
 
@@ -14,19 +17,23 @@ use common\helpers\Url;
                 <h5>(本页共<?= $total;?>条记录)</h5>
             </div>
             <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
-            <form class="navbar-form form-inline"  method="post" action="<?= Url::toRoute(['/wedding/order/select_products']);?>"  name="search-form2" id="search-form2">
-                <div class="sDiv">
-                    <div class="sDiv2" style="border:0px">
-                        <input type="text" name="keywords" value="" placeholder="搜索词" id="input-order-id" class="input-txt">
-                    </div>
-                    <div class="sDiv2" style="border:0px">
-                        <input type="submit" class="btn" value="搜索">
-                    </div>
-                    <div class="sDiv2" style="border:0px">
-                        <input type="button" onclick="select_goods()"  class="btn" value="确定选择">
-                    </div>
+
+            <?php $form=ActiveForm::begin([
+                'options' => ['class' => 'navbar-form form-inline']
+            ])?>
+            <div class="sDiv">
+                <div class="sDiv2" style="border:0px">
+                    <?= Html::textInput('name',$name,['class'=> 'input-txt','placeholder'=> '商品名称']);?>
                 </div>
-            </form>
+                <div class="sDiv2" style="border:0px">
+                    <?= Html::submitButton('搜索',['class'=> 'btn']);?>
+                </div>
+                <div class="sDiv2" style="border:0px">
+                    <?= Html::button('确定选择',['class'=> 'btn','onclick' => 'select_goods()']);?>
+                </div>
+
+            </div>
+            <?php ActiveForm::end()?>
         </div>
         <div class="hDiv">
             <div class="hDivBox" id="ajax_return">
@@ -74,60 +81,112 @@ use common\helpers\Url;
             </div>
         </div>
         <div class="bDiv" style="height: auto;">
-            <div id="flexigrid" cellpadding="0" cellspacing="0" border="0">
-                <table cellspacing="0" cellpadding="0" id="goos_table">
-                    <tbody>
-                    <?php foreach ( $product as $item ):?>
-                        <tr date-id="<?= $item['id'];?>">
-                            <td class="sign" axis="col0">
-                                <div style="width: 24px;"><i class="ico-check"></i></div>
-                            </td>
-                            <td align="left" abbr="order_sn" axis="col3" class="">
-                                <div style="text-align: left; width: 200px;" class=""><?= $item['product']['name'];?></div>
-                            </td>
-                            <td align="left" abbr="order_spec" axis="col3" class="">
-                                <div style="text-align: left; width: 200px;" class=""><?= $item['name'];?></div>
-                            </td>
-                            <td align="left" abbr="consignee" axis="col4" class="">
-                                <div style="text-align: right; width: 100px;" class=""><?= '￥'.number_format($item['price'],2);?></div>
-                            </td>
-                            <td align="center" abbr="article_show" axis="col5" class="">
-                                <div style="text-align: center; width: 80px;" class="">
-                                    <?=$item['stock'];?>
-                                </div>
-                            </td>
-                            <td align="center" abbr="article_show" axis="col5" class="" style="display:none;" >
-                                <div style="text-align: center; width: 120px;" class=""   >
-                                    <input type="text" name="goods_id[<?=$item['id'];?>][goods_num]" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" class="form-control" style="width:60px !important;text-align:center" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" value="1"  style="display:none;" />
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                //   'filterModel' => $searchModel,
+                'options' => ['id'=> 'flexigrid',"cellpadding"=>"0", "cellspacing"=>"0", "border"=>"0"],
+                'layout'=>"{items}\n{pager}",
+                //重新定义分页样式
+                'tableOptions' => [
+                    'id' => 'goos_table',
+                    'fixedNumber' => 2,
+                    'fixedRightNumber' => 1,
+                ],
+                'headerRowOptions' => ["hidden"=>"hidden"],
+                'rowOptions' => function($model){
+                    return ['date-id' =>$model['id']];
+                },
+                'columns' => [
+                    [
+                        'attribute' => 'id',
+                        'format' => 'raw',
+                        'contentOptions' => ["class"=>"sign","axis"=>"col0"],
+                        'value' => function($model){
+                            return '<div style="width: 24px;"><i class="ico-check"></i></div>';
+                        }
+                    ],
+                    [
+                        'attribute' => 'product_name',
+                        'contentOptions' => ["align"=>"left", "abbr"=>"order_spec", "axis"=>"col3"],
+                        'value' => function($model){
+                            return '<div style="text-align: left; width: 200px;" class="">'.$model['product_name'].'</div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'name',
+                        'contentOptions' => ["align"=>"left", "abbr"=>"order_sn", "axis"=>"col3"],
+                        'value' => function($model){
+                            return '<div style="text-align: left; width: 200px;">'.$model['name'].'</div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'price',
+                        'contentOptions' => ["align"=>"left", "abbr"=>"consignee", "axis"=>"col4"],
+                        'value' => function($model){
+                            return '<div style="text-align: right; width: 100px;">￥'.number_format($model['price'],2).'</div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'stock',
+                        'contentOptions' => ["align"=>"center", "abbr"=>"article_show", "axis"=>"col5"],
+                        'value' => function($model){
+                            return '<div style="text-align: center; width: 80px;">'.$model['stock'].'</div>';
+                        },
+                        'filter' => false,
+                        'format' => 'raw',
+                    ],
+                    [
+                        'contentOptions' => ["align"=>"center", "abbr"=>"article_show", "axis"=>"col5", "style"=>"display:none;"],
+                        'value' => function($model){
+                            return '<div style="text-align: center; width: 120px;" class=""   >
+                                    <input type="text" name="goods_id['.$model['id'].'][goods_num]" onkeyup="this.value=this.value.replace(/[^\d.]/g,\'\')" class="form-control" style="width:60px !important;text-align:center" onpaste="this.value=this.value.replace(/[^\d.]/g,\'\')" value="1"  style="display:none;" />
                                     <input type="checkbox" style="display:none;" />
-                                </div>
-                            </td>
-                            <td align="center" abbr="article_show" axis="col5" class="" style="display:none;" >
-                                <div style="text-align: center; width: 80px;" class=""   >
-                                    <input type="radio" name="goods_id[<?=$item['id'];?>][give]"   value="1"  style="display:none;" />是&nbsp;&nbsp;
-                                    <input type="radio" name="goods_id[<?=$item['id'];?>][give]" checked="checked"   value="0"  style="display:none;" />否
+                                </div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'contentOptions' => ["align"=>"center", "abbr"=>"article_show", "axis"=>"col5", "style"=>"display:none;"],
+                        'value' => function($model){
+                            return '<div style="text-align: center; width: 80px;" class=""   >
+                                    <input type="radio" name="goods_id['.$model['id'].'][give]"   value="1"  style="display:none;" />是&nbsp;&nbsp;
+                                    <input type="radio" name="goods_id['.$model['id'].'][give]" checked="checked"   value="0"  style="display:none;" />否
                                     <input type="checkbox" style="display:none;" />
-                                </div>
-                            </td>
-                            <td align="center" abbr="article_remark" axis="col5" class="" style="display:none;" >
-                                <div style="text-align: center; width: 220px;" class=""   >
-                                    <input type="text" name="goods_id[<?=$item['id'];?>][note]"  class="form-control" style="width:200px" value="" class="input-sm"  style="display:none;" />
+                                </div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'contentOptions' => ["align"=>"center", "abbr"=>"article_remark", "axis"=>"col5", "style"=>"display:none;"],
+                        'value' => function($model){
+                            return '<div style="text-align: center; width: 220px;" class=""   >
+                                    <input type="text" name="goods_id['.$model['id'].'][note]"  class="form-control" style="width:200px" value="" class="input-sm"  style="display:none;" />
                                     <input type="checkbox" style="display:none;" />
-                                </div>
-                            </td>
-                            <td align="center" abbr="article_time" axis="col6" class="">
-                                <div style="text-align: center; width: 60px;" class="">
+                                </div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'contentOptions' => ["align"=>"center", "abbr"=>"article_time", "axis"=>"col6" ],
+                        'value' => function($model){
+                            return '<div style="text-align: center; width: 60px;" class="">
                                     <a class="btn red" href="javascript:void(0);" onclick="javascript:$(this).parent().parent().parent().remove();"><i class="fa fa-trash-o"></i>删除</a>
-                                </div>
-                            </td>
-                            <td style="width:100%" axis="col7">
-                                <div></div>
-                            </td>
-                        </tr>
-                    <?php endforeach;?>
-                    </tbody>
-                </table>
-            </div>
+                                </div>';
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'contentOptions' => ["style"=>"width:100%", "axis"=>"col7"],
+                        'value' => function($model){
+                            return "<div></div>";
+                        },
+                        'format' => 'raw',
+                    ],
+                ],
+            ]); ?>
             <div class="iDiv" style="display: none;"></div>
         </div>
     </div>

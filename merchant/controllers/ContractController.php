@@ -10,6 +10,7 @@ use addons\Crm\common\models\contract\Contract;
 use addons\Finance\common\enums\AuditStatusEnum;
 use addons\Finance\common\enums\BillTypeEnum;
 use addons\Finance\common\models\report\Invoice;
+use addons\Store\common\models\product\Product;
 use addons\Store\common\models\product\Sku;
 use common\enums\AppEnum;
 use common\enums\StatusEnum;
@@ -135,22 +136,38 @@ class ContractController extends BaseController
 
     public function actionSelect_products()
     {
-        $product = Sku::find()
-            ->where(['merchant_id'=>$this->getMerchantId()])
-            ->andWhere( new Expression('FIND_IN_SET(:store, store_id)',[':store'=>0]) )
-            ->andWhere(['status'=>StatusEnum::ENABLED])->with('product')
-            ->asArray()->all();
+        $name = Yii::$app->request->post('name', '');
+
         $total = Sku::find()
             ->where(['merchant_id'=>$this->getMerchantId()])
             ->andWhere(new Expression('FIND_IN_SET(:store, store_id)',[':store'=>0]))
+            ->andWhere(empty($name) ? [] : ['like','product_name',$name])
             ->andWhere(['status'=>StatusEnum::ENABLED])->count();
-        if( Yii::$app->request->isPost ){
 
-        }
+        $searchModel = new SearchModel([
+            'model' => Sku::class,
+            'scenario' => 'default',
+            'partialMatchAttributes' => ['product_name', 'name'], // 模糊查询
+            'defaultOrder' => [
+                'id' => SORT_DESC
+            ],
+            'pageSize' => $this->pageSize
+        ]);
+        $dataProvider = $searchModel
+            ->search(Yii::$app->request->queryParams);
+        $dataProvider->query
+            ->andWhere(['=', 'status', StatusEnum::ENABLED])
+            ->andWhere(empty($name) ? [] : ['like','product_name',$name])
+            ->andWhere(new Expression('FIND_IN_SET(:store, store_id)',[':store'=>0]))
+            ->andFilterWhere(['merchant_id' => $this->getMerchantId()])
+            ->with(['product']);
         $this->layout = "@addons/Crm/merchant/views/layouts/product";
         return $this->render( "select_products",[
-            'product' => $product,
-            'total' => $total
+            'product' => [],
+            'total' => $total,
+            'name' =>$name,
+            'dataProvider' => $dataProvider,
+          //  'searchModel' => $searchModel
         ] );
     }
 }
