@@ -46,10 +46,13 @@ class ContractService extends Service
     {
         $model = $this->getOrderInfo($orderId);
         $total = $this->getContractProductTotal($orderId);
-        if( $model == null || $total == null ){
+        if( $model == null ){
             return false;
         }
-        return  $model::updateAll(['product_total'=>$total],['id'=>$orderId]) ?? false;
+        if( $total == 0 ){
+            return true;
+        }
+        return  $model::updateAll(['product_total'=>$total],['id'=>$orderId]) ? true : false;
     }
 
     /**

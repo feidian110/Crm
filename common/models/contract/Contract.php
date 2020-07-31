@@ -11,6 +11,7 @@ use addons\Store\common\models\product\Sku;
 use addons\Store\common\models\store\Store;
 use common\behaviors\MerchantBehavior;
 use common\enums\StatusEnum;
+use common\helpers\ResultHelper;
 use common\models\merchant\Member;
 use common\models\merchant\Merchant;
 use Yii;
@@ -94,7 +95,7 @@ class Contract extends \common\models\base\BaseModel
             $data['Contract']['title'] = $data['Contract']['act_time'].'-'.SlotEnum::getValue($data['Contract']['slot']).'-'.$data['Contract']['act_place'].'-'.NatureEnum::getValue($data['Contract']['nature_id']);
             $this->store_id = $data['Contract']['store_id'] ? $data['Contract']['store_id'] : Yii::$app->user->identity->store_id;
             if( !$this->load($data) || !$this->save() ){
-                throw new \Exception($this->getErrors());
+                throw new \Exception($this->getErrors($this));
             }
             foreach ( $data['goods_id'] as $p =>$v ){
                 $sku = Sku::findOne($p);
@@ -117,7 +118,9 @@ class Contract extends \common\models\base\BaseModel
                 ];
                 $product = new ContractProduct();
                 $product->attributes = $tmp;
-                $product->save();
+                if(!$product->save()){
+                    throw new \Exception($this->getErrors($product));
+                }
             }
 
             if( !Yii::$app->crmService->contract->updateOrderProductPrice($this->id) ){
@@ -127,11 +130,11 @@ class Contract extends \common\models\base\BaseModel
                 throw new \Exception('客户状态更新失败！');
             }
             if( !Yii::$app->financeService->invoice->createReceivables($this) ){
-                throw new \Exception('合同添加失败！');
+                throw new \Exception('合同(应收款)添加失败！');
             }
 
             $notice = WorkNotice::findOne(['merchant_id'=>$this->merchant_id,'store_id'=>$this->store_id]);
-            if ( $notice && $notice['open_notice']== 1 && !empty($notice['contract_key']) ){
+            if ( $notice && $notice['open_notice']== 0 && !empty($notice['contract_key']) ){
                 $arr = [
                     'key' => $notice['contract_key'],
                     'content' => ' **新增:合同订单 <font color="info">1 个</font>,详情如下：**
@@ -148,11 +151,11 @@ class Contract extends \common\models\base\BaseModel
                 Yii::$app->workService->message->markdown($arr,'customer');
             }
             $tran->commit();            //只有执行了commit(),对于上面数据库的操作才会真正执行
+            return ResultHelper::json(200, '操作成功');
         }catch ( \Exception $e) {
             $tran->rollBack();
-            return false;
+            return ResultHelper::json(422, $e->getMessage());
         }
-        return true;
     }
 
     /**
@@ -198,6 +201,7 @@ class Contract extends \common\models\base\BaseModel
     }
 
 
+
     /**
      * {@inheritdoc}
      */
@@ -206,7 +210,7 @@ class Contract extends \common\models\base\BaseModel
         return [
             'id' => 'ID',
             'merchant_id' => 'Merchant ID',
-            'store_id' => 'Store ID',
+            'store_id' => '所属门店',
             'customer_id' => '客户信息',
             'sign_time' => '签订时间',
             'sn' => '合同编号',

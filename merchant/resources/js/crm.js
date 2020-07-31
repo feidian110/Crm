@@ -39,7 +39,7 @@ function selectGoods(){
         title: '选择商品',
         shadeClose: true,
         shade: 0.8,
-        area: ['60%', '80%'],
+        area: ['65%', '80%'],
         content: url,
     });
 }

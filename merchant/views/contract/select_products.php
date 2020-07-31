@@ -9,9 +9,9 @@ use yii\widgets\ActiveForm;
 
 <div id="append_parent"></div>
 <div id="ajaxwaitid"></div>
-<div class="page" style="padding:10px">
-    <div class="flexigrid" >
-        <div class="mDiv">
+<div class="page">
+    <div class="flexigrid" style="95%">
+        <div class="mDiv" style="width: 98%;text-align: center;">
             <div class="ftitle">
                 <h3>商品列表</h3>
                 <h5>(本页共<?= $total;?>条记录)</h5>
@@ -35,7 +35,7 @@ use yii\widgets\ActiveForm;
             </div>
             <?php ActiveForm::end()?>
         </div>
-        <div class="hDiv">
+        <div class="hDiv" style="width: 98%">
             <div class="hDivBox" id="ajax_return">
                 <table cellspacing="0" cellpadding="0" id="table_head">
                     <thead>

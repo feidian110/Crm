@@ -71,10 +71,8 @@ class ContractController extends BaseController
         $model = new Contract();
         if( Yii::$app->request->isPost ){
             $post = Yii::$app->request->post();
-            if( $model->create($post) ){
-                return $this->message('订单添加成功！', $this->redirect(['index']), 'success');
-            }
-            return $this->message("订单添加失败！", $this->redirect(['index']), 'error');
+            $result = $model->create($post);
+            return $this->message($result['message'], $this->redirect(['index']), $result['code'] == 200 ? 'success' : 'error');
         }
         return $this->render( $this->action->id,[
             'model' => $model,
@@ -103,7 +101,7 @@ class ContractController extends BaseController
         $id = Yii::$app->request->get('id');
         $status = Yii::$app->request->get('status');
         $model = $this->findModel($id);
-        $result = $model::updateAll(['audit_status' =>$status,'audit_time' => $status== AuditStatusEnum::ENABLED ? time() : null,'audit_person' => Yii::$app->user->getId() ],['id' =>$id]);
+        $result = $model::updateAll(['status'=> $status,'audit_status' =>$status,'audit_time' => $status== AuditStatusEnum::ENABLED ? time() : null,'audit_person' => Yii::$app->user->getId() ],['id' =>$id]);
 
         $res = Invoice::updateAll(['status' =>$status],['obj_id' =>$id, 'bill_type' => BillTypeEnum::SALE]);
         if( $result && $res ){

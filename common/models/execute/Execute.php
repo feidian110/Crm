@@ -77,6 +77,8 @@ class Execute extends \common\models\base\BaseModel
             $data['Execute']['sn'] = Yii::$app->crmService->base->createSn(Execute::class,CrmTypeEnum::EXECUTE);
             $this->store_id = $data['Execute']['store_id'] ? $data['Execute']['store_id'] : Yii::$app->user->identity->store_id;
             $order = Contract::findOne($data['Execute']['order_id']);
+            $this->title = $order['title'];
+            $this->act_time = $order['act_time'];
             $this->owner_id = $order['owner_id'];
             if( !$this->load($data) || !$this->save() ){
                 throw new \Exception($this->getErrors());
@@ -85,6 +87,8 @@ class Execute extends \common\models\base\BaseModel
                 $sku = Sku::findOne($p);
                 $tmp = [
                     'customer_id' => $data['Execute']['customer_id'],
+                    'order_id' => $data['Execute']['order_id'],
+                    'supplier_id' => $data['Execute']['supplier_id'],
                     'execute_id' => $this->id,
                     'store_id' => $this->store_id,
                     'product_id' =>$sku['product_id'],
@@ -132,6 +136,20 @@ class Execute extends \common\models\base\BaseModel
         return $this->hasOne( Member::class, ['id' => 'owner_id'] );
     }
 
+    public function getCreator()
+    {
+        return $this->hasOne( Member::class,['id' => 'creator_id'] );
+    }
+
+    public function getOrder()
+    {
+        return $this->hasOne( Contract::class,['id' => 'order_id'] );
+    }
+
+    public function getDetail()
+    {
+        return $this->hasMany( ExecuteProduct::class,['execute_id' => 'id' ] );
+    }
 
     public function beforeSave($insert)
     {

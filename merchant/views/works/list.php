@@ -114,7 +114,8 @@ HTML;
                                     'buttons' => [
                                         'view' => function ($url ,$model, $key){
                                             return Html::a('查看 ',['view','id'=>$model->id],[
-
+                                                    'data-toggle' => 'modal',
+                                                    'data-target' => '#ajaxModalLg',
                                                 ]) . '<br>';
                                         } ,
                                         'edit' => function ($url, $model, $key) {

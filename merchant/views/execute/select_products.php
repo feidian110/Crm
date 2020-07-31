@@ -1,6 +1,8 @@
 <?php
 
+use common\helpers\Html;
 use common\helpers\Url;
+use yii\widgets\ActiveForm;
 
 ?>
 
@@ -14,19 +16,21 @@ use common\helpers\Url;
                 <h5>(本页共<?= $total;?>条记录)</h5>
             </div>
             <div title="刷新数据" class="pReload"><i class="fa fa-refresh"></i></div>
-            <form class="navbar-form form-inline"  method="post" action="<?= Url::toRoute(['/wedding/order/select_products']);?>"  name="search-form2" id="search-form2">
-                <div class="sDiv">
-                    <div class="sDiv2" style="border:0px">
-                        <input type="text" name="keywords" value="" placeholder="搜索词" id="input-order-id" class="input-txt">
-                    </div>
-                    <div class="sDiv2" style="border:0px">
-                        <input type="submit" class="btn" value="搜索">
-                    </div>
-                    <div class="sDiv2" style="border:0px">
-                        <input type="button" onclick="select_goods()"  class="btn" value="确定选择">
-                    </div>
+            <?php $form = ActiveForm::begin([
+                'options' => ['class'=> 'navbar-form form-inline']
+            ])?>
+            <div class="sDiv">
+                <div class="sDiv2" style="border:0px">
+                    <?= Html::textInput('name', $name, ['class' => 'input-txt','placeholder'=> '搜索词']);?>
                 </div>
-            </form>
+                <div class="sDiv2" style="border:0px">
+                    <?= Html::submitButton('搜索',['class' => 'btn']);?>
+                </div>
+                <div class="sDiv2" style="border:0px">
+                    <?= Html::button('确定选择',['class'=> 'btn' ,'onclick'=> 'select_goods()']);?>
+                </div>
+            </div>
+            <?php ActiveForm::end()?>
         </div>
         <div class="hDiv">
             <div class="hDivBox" id="ajax_return">
