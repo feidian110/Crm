@@ -83,7 +83,7 @@ $role = Yii::$app->services->rbacAuthRole->getRole();
                 </div>
                 <?= $form->field($model, 'buyer_id')->dropDownList([],['prompt'=>'使用手机号搜索用户名...']);?>
                 <?= $form->field($model, 'contract_price')->textInput();?>
-
+                <?= $form->field($model, 'owner_id')->dropDownList(Yii::$app->storeService->staff->getDropDown(),['prompt'=>'请选择...','value'=>Yii::$app->user->getId()]);?>
 
                 <div class="form-group col-sm-12">
                     <div class="form-group">

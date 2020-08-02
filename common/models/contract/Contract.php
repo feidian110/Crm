@@ -195,7 +195,6 @@ class Contract extends \common\models\base\BaseModel
     {
         if ($this->isNewRecord) {
             $this->creator_id = Yii::$app->user->getId();
-            $this->owner_id = Yii::$app->user->getId();
         }
         return parent::beforeSave($insert);
     }
