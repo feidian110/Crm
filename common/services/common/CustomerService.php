@@ -49,7 +49,7 @@ class CustomerService extends  Service
     {
         return Customer::find()
             ->where(['merchant_id'=>$this->getMerchantId()])
-            ->andWhere(['store_id'=>0])
+            ->andWhere(['store_id'=>Yii::$app->user->identity->store_id])
             ->andWhere(['between','status',CustomerStatusEnum::DISABLED,CustomerStatusEnum::ENABLED])
             ->orderBy(['act_time'=>SORT_DESC])
             ->asArray()->all();
