@@ -46,9 +46,9 @@ class RecordController extends BaseController
             // ajax 校验
             $this->activeFormValidate($model);
             if( $model->edit(Yii::$app->request->post()) ){
-                return $this->message('信息添加成功！', $this->redirect(['customer/view','id'=>$customerId]), 'success');
+                return $this->message('信息添加成功！', $this->redirect(['customer/view','id'=>$customer['id']]), 'success');
             }
-            return $this->message($this->getError($model), $this->redirect(['customer/view','id'=>$customerId]), 'error');
+            return $this->message($this->getError($model), $this->redirect(['customer/view','id'=>$customer['id']]), 'error');
         }
         return $this->renderAjax( $this->action->id,[
             'model' => $model,
