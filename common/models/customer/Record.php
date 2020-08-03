@@ -58,6 +58,16 @@ class Record extends \common\models\base\BaseModel
         return false;
     }
 
+    public function edit($data)
+    {
+        $data['Record']['record_date'] = strtotime($data['Record']['record_date']);
+        if( $this->load($data) && $this->save(0) ){
+            Yii::$app->crmService->base->updateActionLog($this->store_id,Yii::$app->user->id,CrmTypeEnum::FOLLOW,$this->id,'','','更新了跟进记录');
+            return true;
+        }
+        return false;
+    }
+
     public function getContact()
     {
         return $this->hasOne( Contact::class,['id' => 'contact_id'] );
