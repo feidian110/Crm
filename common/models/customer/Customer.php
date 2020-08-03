@@ -7,9 +7,10 @@ use addons\Crm\common\enums\NatureEnum;
 use addons\Crm\common\enums\SlotEnum;
 use addons\Crm\common\models\base\WorkNotice;
 use addons\Crm\common\models\contact\Contact;
-use addons\Finance\common\models\report\Invoice;
+use addons\Finance\common\models\capital\Receipt;
 use addons\Store\common\models\store\Store;
 use common\behaviors\MerchantBehavior;
+use common\enums\StatusEnum;
 use common\enums\WhetherEnum;
 use common\models\merchant\Member;
 use Yii;
@@ -144,6 +145,16 @@ class Customer extends \common\models\base\BaseModel
     public function getStore()
     {
         return $this->hasOne( Store::class,  [ 'id' => 'store_id' ] );
+    }
+
+    public function getRecord()
+    {
+        return $this->hasMany( Record::class,['customer_id' => 'id'] )->orderBy(['record_date' =>SORT_DESC]);
+    }
+
+    public function getReceipt()
+    {
+        return $this->hasMany( Receipt::class,['customer_id' => 'id'] )->where(['>=','status',StatusEnum::DISABLED]);
     }
 
     public function beforeSave($insert)

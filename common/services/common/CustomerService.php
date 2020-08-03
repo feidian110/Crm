@@ -88,4 +88,48 @@ class CustomerService extends  Service
             ->asArray()->all();
         return ArrayHelper::map($model,'id','title');
     }
+
+    /**
+     * 获取所有未删除客户信息
+     * @return array
+     * @throws \yii\web\UnauthorizedHttpException
+     */
+    public function getNormalAllDataDropdown()
+    {
+        $role = Yii::$app->services->rbacAuthRole->getRole();
+        if( $role['app_id'] == AppEnum::MERCHANT && $role['pid'] == 0 ){
+            $customer = $this->getNormalData();
+        }else{
+            $customer = $this->getStoreNormalDate();
+        }
+        return ArrayHelper::map($customer,'id','title');
+    }
+
+    /**
+     * 获取商户所有未删除客户信息
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getNormalData()
+    {
+        return Customer::find()
+            ->where(['merchant_id'=>$this->getMerchantId()])
+            ->andWhere(['>=','status',CustomerStatusEnum::DISABLED])
+            ->orderBy(['act_time'=>SORT_DESC])
+            ->asArray()->all();
+    }
+
+
+    /**
+     * 获取门店所有未删除客户信息
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function getStoreNormalDate()
+    {
+        return Customer::find()
+            ->where(['merchant_id'=>$this->getMerchantId()])
+            ->andWhere(['store_id'=>Yii::$app->user->identity->store_id])
+            ->andWhere(['>=','status',CustomerStatusEnum::DISABLED])
+            ->orderBy(['act_time'=>SORT_DESC])
+            ->asArray()->all();
+    }
 }

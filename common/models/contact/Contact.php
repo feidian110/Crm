@@ -3,6 +3,8 @@
 namespace addons\Crm\common\models\contact;
 
 use common\behaviors\MerchantBehavior;
+use common\enums\StatusEnum;
+use common\enums\WhetherEnum;
 use Yii;
 
 /**
@@ -46,12 +48,31 @@ class Contact extends \common\models\base\BaseModel
     {
         return [
             [['leads_id', 'customer_id', 'merchant_id','is_main', 'store_id', 'creator_id', 'owner_id', 'gender', 'sort', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['name', 'mobile'], 'required'],
+            [['name', 'mobile', 'is_main'], 'required'],
             [['name'], 'string', 'max' => 30],
             [['telephone', 'mobile'], 'string', 'max' => 20],
             [['email'], 'string', 'max' => 200],
             [['remark'], 'string', 'max' => 2000],
         ];
+    }
+
+    public function create($data)
+    {
+        if( $data['Contact']['is_main'] == WhetherEnum::ENABLED ){
+            $contact = Contact::find()
+                ->where(['customer_id' =>$data['Contact']['customer_id']])
+                ->andWhere(['>=','status',StatusEnum::DISABLED])
+                ->one();
+            if( $contact ){
+                if ( !Contact::updateAll(['is_main' =>WhetherEnum::DISABLED],['id' => $contact['id'] ])){
+                    return false;
+                }
+            }
+        }
+        if( $this->load($data) && $this->save() ){
+            return true;
+        }
+        return false;
     }
 
     public function beforeSave($insert)
@@ -73,6 +94,7 @@ class Contact extends \common\models\base\BaseModel
             'customer_id' => '客户',
             'merchant_id' => 'Merchant ID',
             'store_id' => 'Store ID',
+            'is_main' => '主要决策人',
             'creator_id' => '创建人',
             'owner_id' => '负责人',
             'name' => '联系人',

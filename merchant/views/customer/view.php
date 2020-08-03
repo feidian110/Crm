@@ -2,8 +2,12 @@
 
 use addons\Crm\common\enums\CustomerStatusEnum;
 use addons\Crm\common\enums\NatureEnum;
+use addons\Crm\common\enums\RecordMethodEnum;
 use addons\Crm\common\enums\SlotEnum;
 use addons\Finance\common\enums\AuditStatusEnum;
+use addons\Finance\common\enums\ReasonEnum;
+use common\enums\GenderEnum;
+use common\enums\WhetherEnum;
 use common\helpers\Html;
 
 $this->title = "客户查看";
@@ -78,17 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </tr>
                     </thead>
                 </table>
-                <br><br>
-                <?= Html::a('<i class="fa fa-fw fa-plus"></i>&nbsp;添加跟进',['/crm/record/create','id'=>$model->id],[
-                    'class' => 'btn btn-primary btn-sm',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#ajaxModalLg',
-                ]);?>
-                <?= Html::a('<i class="fa fa-fw fa-calendar-plus-o"></i>&nbsp;预约到店',['/crm/record/appoint','id'=>$model->id],[
-                    'class' => 'btn btn-warning btn-sm',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#ajaxModal',
-                ]);?>
+                <br>
                 <?php if(CustomerStatusEnum::COMPLETE > $model->status && $model->status > CustomerStatusEnum::DELETE ):?>
                     <?= Html::a('<i class="fa fa-fw fa-check-square"></i>&nbsp;跟进完成',['/crm/record/complete','id'=>$model->id],[
                         'class'=>'btn btn-default btn-sm',
@@ -109,47 +103,147 @@ $this->params['breadcrumbs'][] = $this->title;
                         'data-target' => '#ajaxModal',
                     ]);?>
                 <?php endif;?>
-                <br>&nbsp;
+
             </div>
             <div class="box-footer">
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_1" data-toggle="tab">活动日志</a></li>
+                        <li class="active"><a href="#tab_1" data-toggle="tab">跟进记录</a></li>
                         <li><a href="#tab_2" data-toggle="tab">详细资料</a></li>
                         <li><a href="#tab_3" data-toggle="tab">联系人（0）</a></li>
                         <li><a href="#tab_4" data-toggle="tab">商机信息</a></li>
                         <li><a href="#tab_5" data-toggle="tab">合同订单</a></li>
                         <li><a href="#tab_6" data-toggle="tab">回款信息</a></li>
-                        <li><a href="#tab_7" data-toggle="tab">跟进记录</a></li>
-                        <li><a href="#tab_8" data-toggle="tab">操作记录</a></li>
+                        <li><a href="#tab_7" data-toggle="tab">操作记录</a></li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane" id="tab_1">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                            new common language would be desirable: one could refuse to pay expensive translators. To
-                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                            words. If several languages coalesce, the grammar of the resulting language is more simple
-                            and regular than that of the individual languages.
+                        <div class="tab-pane active" id="tab_1">
+                            <?= Html::a('<i class="fa fa-fw fa-plus"></i>&nbsp;添加跟进',['/crm/record/create','id'=>$model->id],[
+                                'class' => 'btn btn-primary btn-sm',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#ajaxModalLg',
+                            ]);?>
+                            <?= Html::a('<i class="fa fa-fw fa-calendar-plus-o"></i>&nbsp;预约到店',['/crm/record/appoint','id'=>$model->id],[
+                                'class' => 'btn btn-warning btn-sm',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#ajaxModal',
+                            ]);?>
+                            <?= Html::a('<i class="fa fa-fw fa-calendar-plus-o"></i>&nbsp;添加联系人',['/crm/contact/create','id'=>$model->id],[
+                                'class' => 'btn btn-warning btn-sm',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#ajaxModalLg',
+                            ]);?>
+                            <?= Html::a('<i class="fa fa-fw fa-plus"></i>&nbsp;添加合同',['/crm/record/create','id'=>$model->id],[
+                                'class' => 'btn btn-primary btn-sm',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#ajaxModalLg',
+                            ]);?>
+                            <?= Html::a('<i class="fa fa-fw fa-plus"></i>&nbsp;添加回款',['/crm/record/create','id'=>$model->id],[
+                                'class' => 'btn btn-primary btn-sm',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#ajaxModalLg',
+                            ]);?>
+                            <br/><br/>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr style="background: #F0F0F0; height: 50px">
+                                    <th class="text-center">沟通时间</th>
+                                    <th class="text-center">联系人</th>
+                                    <th class="text-center">沟通方式</th>
+                                    <th class="text-center">沟通内容</th>
+                                    <th class="text-center">下次沟通时间</th>
+                                    <th class="text-center">添加人</th>
+                                    <th class="text-center">添加时间</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php if( $model['record'] ):?>
+                                    <?php foreach ( $model['record'] as $record):?>
+                                        <tr>
+                                            <td class="text-center" width="180"><?=Yii::$app->formatter->asDatetime($record['record_date']);?></td>
+                                            <td class="text-center" width="100"><?=$record['contact']['name'];?></td>
+                                            <td class="text-center" width="150"><?= RecordMethodEnum::getValue($record['record_method']);?></td>
+                                            <td><?=$record['content'];?></td>
+                                            <td class="text-center" width="180"><?=$record['next_time'];?></td>
+                                            <td class="text-center" width="100"><?=$record['creator']['realname'];?></td>
+                                            <td class="text-center" width="180"><?=Yii::$app->formatter->asDatetime($record['created_at']);?></td>
+                                            <td width="100">
+                                                <?= Html::a('编辑',['record/edit','id'=>$record['id']],['class' => 'btn btn-primary btn-sm',
+                                                    'data-toggle' => 'modal',
+                                                    'data-target' => '#ajaxModalLg',]);?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach;?>
+                                <?php else:?>
+                                    <tr style="height: 150px">
+                                        <td colspan="8" class="text-center">暂无跟进记录</td>
+                                    </tr>
+                                <?php endif;?>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane" id="tab_2">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                            new common language would be desirable: one could refuse to pay expensive translators. To
-                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                            words. If several languages coalesce, the grammar of the resulting language is more simple
-                            and regular than that of the individual languages.
+                            <table>
+                                <thead>
+                                <tr style="background: #F0F0F0; height: 50px">
+                                    <th>姓名</th>
+                                    <th>性别</th>
+                                    <th>手机号码</th>
+                                    <th>电子邮箱</th>
+                                    <th>首要决策人</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php if( $model['contact'] ):?>
+                                <?php foreach ($model['contact'] as $contact):?>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                                <?php endforeach;?>
+                                <?php else:?>
+                                <tr style="height: 150px">
+                                    <td colspan="7" >暂无联系人信息</td>
+                                </tr>
+                                <?php endif;?>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane" id="tab_3">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                            new common language would be desirable: one could refuse to pay expensive translators. To
-                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                            words. If several languages coalesce, the grammar of the resulting language is more simple
-                            and regular than that of the individual languages.
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr style="background: #F0F0F0; height: 50px">
+                                    <th class="text-center">姓名</th>
+                                    <th class="text-center">性别</th>
+                                    <th class="text-center">手机号码</th>
+                                    <th class="text-center">电子邮箱</th>
+                                    <th class="text-center">首要决策人</th>
+                                    <th class="text-center">备注</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php if( $model['contact'] ):?>
+                                    <?php foreach ($model['contact'] as $contact):?>
+                                        <tr>
+                                            <td class="text-center" width="100"><?=$contact['name'];?></td>
+                                            <td class="text-center" width="100"><?=GenderEnum::getValue($contact['gender']);?></td>
+                                            <td class="text-center" width="150"><?=$contact['mobile'];?></td>
+                                            <td class="text-center" width="200"><?=$contact['email'];?></td>
+                                            <td class="text-center" width="100"><?= WhetherEnum::getValue($contact['is_main']);?></td>
+                                            <td><?=$contact['remark'];?></td>
+                                            <td class="text-center" width="150"></td>
+                                        </tr>
+                                    <?php endforeach;?>
+                                <?php else:?>
+                                    <tr style="height: 150px">
+                                        <td colspan="7" >暂无联系人信息</td>
+                                    </tr>
+                                <?php endif;?>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane" id="tab_4">
                             The European languages are members of the same family. Their separate existence is a myth.
@@ -161,33 +255,66 @@ $this->params['breadcrumbs'][] = $this->title;
                             and regular than that of the individual languages.
                         </div>
                         <div class="tab-pane" id="tab_5">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                            new common language would be desirable: one could refuse to pay expensive translators. To
-                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                            words. If several languages coalesce, the grammar of the resulting language is more simple
-                            and regular than that of the individual languages.
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr style="background: #F0F0F0; height: 50px">
+                                    <th class="text-center">编号</th>
+                                    <th class="text-center">签订时间</th>
+                                    <th class="text-center">活动时间</th>
+                                    <th class="text-center">活动地点</th>
+                                    <th class="text-center">性质</th>
+                                    <th class="text-center">新郎姓名</th>
+                                    <th class="text-center">新娘姓名</th>
+                                    <th class="text-center">合同金额</th>
+                                    <th class="text-center">签订人</th>
+                                    <th class="text-center">合同备注</th>
+                                    <th class="text-center">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr style="height: 150px">
+                                    <td colspan="11" class="text-center">暂无合同信息</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane" id="tab_6">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                            new common language would be desirable: one could refuse to pay expensive translators. To
-                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                            words. If several languages coalesce, the grammar of the resulting language is more simple
-                            and regular than that of the individual languages.
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr style="background: #F0F0F0; height: 50px">
+                                    <th class="text-center">单据编号</th>
+                                    <th class="text-center">收款时间</th>
+                                    <th class="text-center">收款摘由</th>
+                                    <th class="text-center">收款金额</th>
+                                    <th class="text-center">收款人</th>
+                                    <th class="text-center">创建时间</th>
+                                    <th class="text-center">状态</th>
+                                    <th class="text-center">备注</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php if( $model['receipt'] ):?>
+                                    <?php foreach ($model['receipt'] as $receipt):?>
+                                        <tr>
+                                            <td class="text-center" width="200"><?=$receipt['sn'];?></td>
+                                            <td class="text-center"  width="120"><?=Yii::$app->formatter->asDate($receipt['receipt_date'])?></td>
+                                            <td class="text-center" width="100"><?=ReasonEnum::getValue($receipt['receipt_reason']);?></td>
+                                            <td class="text-right" width="200">￥<?=$receipt['receipt_price'];?></td>
+                                            <td class="text-center" width="100"><?=$receipt['payee']['realname'];?></td>
+                                            <td class="text-center" width="200"><?=Yii::$app->formatter->asDatetime($receipt['created_at']);?></td>
+                                            <td class="text-center" width="150"><?=AuditStatusEnum::getValue($receipt['status']);?></td>
+                                            <td class="text-center" width="150"></td>
+                                        </tr>
+                                    <?php endforeach;?>
+                                <?php else:?>
+                                    <tr style="height: 150px">
+                                        <td colspan="8" >暂无收款信息</td>
+                                    </tr>
+                                <?php endif;?>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane" id="tab_7">
-                            The European languages are members of the same family. Their separate existence is a myth.
-                            For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ
-                            in their grammar, their pronunciation and their most common words. Everyone realizes why a
-                            new common language would be desirable: one could refuse to pay expensive translators. To
-                            achieve this, it would be necessary to have uniform grammar, pronunciation and more common
-                            words. If several languages coalesce, the grammar of the resulting language is more simple
-                            and regular than that of the individual languages.
-                        </div>
-                        <div class="tab-pane" id="tab_8">
                             <ul class="timeline">
                                <?php foreach ( $action as $action ):?>
                                 <li>

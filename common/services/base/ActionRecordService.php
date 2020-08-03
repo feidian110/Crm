@@ -4,6 +4,7 @@
 namespace addons\Crm\common\services\base;
 
 
+use addons\Crm\common\enums\CrmTypeEnum;
 use addons\Crm\common\models\base\ActionRecord;
 use common\components\Service;
 
@@ -20,4 +21,11 @@ class ActionRecordService extends Service
         return $data;
     }
 
+    public function getActivityByCustomerId()
+    {
+        ActionRecord::find()
+            ->where(['or', CrmTypeEnum::CUSTOMER,CrmTypeEnum::FOLLOW])
+            ->asArray()
+            ->all();
+    }
 }
