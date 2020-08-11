@@ -31,7 +31,7 @@ class CustomerController extends BaseController
             'scenario' => 'default',
             'partialMatchAttributes' => ['title', 'act_time'], // 模糊查询
             'defaultOrder' => [
-                'act_time' => SORT_DESC,
+                'act_time' => SORT_ASC,
                 'id' => SORT_DESC
             ],
             'pageSize' => $this->pageSize
@@ -40,7 +40,7 @@ class CustomerController extends BaseController
 
         $start_time = isset($data['start_time']) ? $data['start_time'] : date('Y-m-01');
         $end_time = isset($data['end_time']) ? $data['end_time'] : date( 'Y-12-31' );
-        $time = isset($data['queryDate']) ? ['between','act_time',$data['start_time'],$data['end_time']] : [];
+        $time =   ['between','act_time',$start_time,$end_time];
         $title = isset($data['title']) ? $data['title'] : "";
         $dataProvider = $searchModel
             ->search(Yii::$app->request->queryParams);
