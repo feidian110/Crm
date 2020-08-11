@@ -33,7 +33,7 @@ class ContractController extends BaseController
             'scenario' => 'default',
             'partialMatchAttributes' => ['title', 'groom_name', 'bride_name', 'company_name'], // 模糊查询
             'defaultOrder' => [
-                'act_time' => SORT_DESC,
+                'act_time' => SORT_ASC,
                 'id' => SORT_DESC
             ],
             'pageSize' => $this->pageSize
