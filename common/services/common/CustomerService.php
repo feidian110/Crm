@@ -64,7 +64,7 @@ class CustomerService extends  Service
         return Customer::find()
             ->where(['merchant_id'=>$this->getMerchantId()])
             ->andWhere(['between','status',CustomerStatusEnum::DISABLED,CustomerStatusEnum::ENABLED])
-            ->orderBy(['act_time'=>SORT_DESC])
+            ->orderBy(['act_time'=>SORT_ASC])
             ->asArray()->all();
     }
 
