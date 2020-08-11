@@ -26,8 +26,8 @@ class WorksController extends BaseController
 
         $order = Contract::find()
             ->where(['merchant_id' =>$this->getMerchantId()])
-            ->where(['between','status',ContractStatusEnum::DISABLED,ContractStatusEnum::COMPLETE])
-            ->orderBy(['act_time' => SORT_DESC])
+            ->andWhere(['between','status',ContractStatusEnum::DISABLED,ContractStatusEnum::COMPLETE])
+            ->orderBy(['act_time' => SORT_ASC])
             ->with('owner')
             ->asArray()->all();
         return $this->render($this->action->id, [
