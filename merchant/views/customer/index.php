@@ -83,7 +83,7 @@ HTML;
                         ],
                         [
                             'attribute' => 'act_time',
-                            'headerOptions' => ['class' => 'col-md-2'],
+                            'headerOptions' => ['class' => ''],
                             'value' => function ( $model ){
                                 return $model->act_time . '-' .SlotEnum::getValue($model->slot);
                             },
@@ -122,6 +122,13 @@ HTML;
                             'attribute' => 'policy.mobile'
                         ],
                         [
+                            'attribute' => 'owner_id',
+                            'filter' => false,
+                            'value' => function ( $model ){
+                                return $model['owner']['realname'] ? $model['owner']['realname']: $model['owner']['username'];
+                            }
+                        ],
+                        [
                             'attribute' => 'status',
                             'format' => 'raw',
                             'value' => function ( $model ){
@@ -146,7 +153,12 @@ HTML;
                             )
                         ],
                         [
+                            'attribute' => 'banquet_manager',
+                            'headerOptions' => ['class' => 'text-center'],
+                        ],
+                        [
                             'attribute' => 'remark',
+                            'headerOptions' => ['class' => 'col-md-3 text-center'],
                             'filter' => false,
                         ],
 
@@ -157,13 +169,7 @@ HTML;
                                 return $model['create']['realname'] ? $model['create']['realname']: $model['create']['username'];
                             }
                         ],
-                        [
-                            'attribute' => 'owner_id',
-                            'filter' => false,
-                            'value' => function ( $model ){
-                                return $model['owner']['realname'] ? $model['owner']['realname']: $model['owner']['username'];
-                            }
-                        ],
+
                         [
                             'attribute' => 'created_at',
                             'filter' => false,

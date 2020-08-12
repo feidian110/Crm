@@ -59,7 +59,7 @@ HTML;
                             <div class="input-group m-b">
                                 <input type="text" class="form-control" name="title" placeholder="标题" value="<?=$title;?>"/>
                                 <span class="input-group-btn"><button class="btn btn-white"><i class="fa fa-search"></i> 搜索</button></span>
-                            </div>
+                            </div >
                         </div>
                         <?php ActiveForm::end(); ?>
                     </div>
@@ -76,30 +76,38 @@ HTML;
                     'columns' => [
                         [
                             'class' => 'yii\grid\SerialColumn',
+                            'headerOptions' => ['class' => 'text-center'],
                         ],
                         [
                             'attribute' => 'act_time',
+                            'headerOptions' => ['class' => 'text-center'],
                             'value' => function ( $model ){
                                 return $model->act_time . '-' .SlotEnum::getValue($model->slot);
                             }
                         ],
                         [
-                            'attribute' => 'act_place'
+                            'attribute' => 'act_place',
+                            'headerOptions' => ['class' => 'text-center'],
                         ],
                         [
                             'attribute' => 'nature_id',
+                            'headerOptions' => ['class' => 'text-center'],
                             'value' => function($model){
                                 return NatureEnum::getValue($model->nature_id);
                             }
                         ],
                         [
                             'attribute' => 'groom_name',
+                            'headerOptions' => ['class' => 'text-center'],
                         ],
                         [
-                            'attribute' => 'bride_name'
+                            'attribute' => 'bride_name',
+                            'headerOptions' => ['class' => 'text-center'],
                         ],
                         [
                             'attribute' => 'contract_price',
+                            'headerOptions' => ['class' => 'text-center'],
+                            'contentOptions' => ['class' => 'text-right'],
                             'filter' => false,
                             'value' => function ($model) {
                                 return round($model['contract_price']);
@@ -107,20 +115,27 @@ HTML;
                         ],
                         [
                             'attribute' => 'receive_amount',
+                            'headerOptions' => ['class' => 'text-center'],
+                            'contentOptions' => ['class' => 'text-right'],
                             'filter' => false,
+                            'format' => 'raw',
                             'value' => function ($model) {
-                                return round($model['receive_amount']);
+                                return Html::a( "￥".round($model['receive_amount']),null,['class' => $model['receive_amount'] > 0 ? 'green text-right' : 'text-right' ]);
                             },
                         ],
                         [
                             'attribute' => 'uncollected_amount',
+                            'headerOptions' => ['class' => 'text-center'],
+                            'contentOptions' => ['class' => 'text-right'],
                             'filter' => false,
+                            'format' => 'raw',
                             'value' => function ($model) {
-                                return round($model['uncollected_amount']);
+                                return Html::a( "￥".round($model['uncollected_amount']),null,['class' => $model['uncollected_amount'] > 0 ? 'red text-right' : 'text-right']);
                             },
                         ],
                         [
                             'attribute' => 'audit_status',
+                            'headerOptions' => ['class' => 'text-center'],
                             'value' => function ($model) {
                                 return AuditStateEnum::getValue($model->audit_status);
                             },
@@ -128,6 +143,7 @@ HTML;
                         ],
                         [
                             'attribute' => 'status',
+                            'headerOptions' => ['class' => 'text-center'],
                             'value' => function ($model) {
                                 return CustomerStatusEnum::getValue($model->status);
                             },
@@ -135,10 +151,12 @@ HTML;
                         ],
                         [
                             'attribute' => 'remark',
+                            'headerOptions' => ['class' => 'col-md-3 text-center'],
                             'filter' => false,
                         ],
                         [
                             'header' => '签订人',
+                            'headerOptions' => ['class' => 'text-center'],
                             'attribute' => 'owner_id',
                             'value' => function ($model) {
                                 return $model['owner']['realname'] ?? $model['owner']['username'];
@@ -147,9 +165,19 @@ HTML;
                         ],
                         [
                             'attribute' => 'sign_time',
+                            'headerOptions' => ['class' => 'text-center'],
                             'filter' => false,
                             'value' => function ( $model ){
                                 return Yii::$app->formatter->asDatetime($model->sign_time);
+                            },
+
+                        ],
+                        [
+                            'attribute' => 'created_at',
+                            'headerOptions' => ['class' => 'text-center'],
+                            'filter' => false,
+                            'value' => function ( $model ){
+                                return Yii::$app->formatter->asDatetime($model->created_at);
                             },
 
                         ],
